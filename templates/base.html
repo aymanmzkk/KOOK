@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KOOK - Cocina Precisión{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #F2F7F2; color: #484A47; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        
+        header { background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; flex-wrap: wrap; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon { color: #D84731; font-size: 28px; }
+        .logo-text { font-size: 28px; font-weight: 900; color: #D84731; }
+        
+        nav ul { display: flex; list-style: none; gap: 25px; flex-wrap: wrap; }
+        nav a { text-decoration: none; color: #484A47; font-weight: 500; transition: color 0.3s; }
+        nav a:hover { color: #D84731; }
+        
+        .nav-buttons { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        
+        .btn { padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block; }
+        .btn-outline { border: 2px solid #D84731; color: #D84731; background: transparent; }
+        .btn-outline:hover { background-color: #D84731; color: #F2F7F2; }
+        .btn-primary { background-color: #D84731; color: #F2F7F2; border: 2px solid #D84731; }
+        .btn-primary:hover { background-color: #b53a27; }
+        
+        .language-selector { display: flex; gap: 5px; align-items: center; }
+        .language-selector a { text-decoration: none; color: #666; padding: 5px; }
+        .language-selector a.active { color: #D84731; font-weight: 600; }
+        
+        .flash-messages { margin-top: 20px; }
+        .flash-success { background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; }
+        .flash-error { background-color: #D84731; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; }
+        
+        main { min-height: 500px; padding: 40px 0; }
+        
+        footer { background-color: #484A47; color: #F2F7F2; padding: 60px 0 20px; margin-top: 60px; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-column h3 { color: #D84731; margin-bottom: 20px; }
+        .footer-column ul { list-style: none; }
+        .footer-column ul li { margin-bottom: 10px; }
+        .footer-column ul li a { color: #b5b6b5; text-decoration: none; }
+        .footer-column ul li a:hover { color: #D84731; }
+        .copyright { text-align: center; padding-top: 20px; border-top: 1px solid rgba(242,247,242,0.1); color: #b5b6b5; }
+        
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; gap: 15px; }
+            nav ul { justify-content: center; }
+            .nav-buttons { justify-content: center; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <i class="fas fa-utensils logo-icon"></i>
+                <div class="logo-text">KOOK</div>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/recetas">Recetas</a></li>
+                    <li><a href="/como-funciona">Cómo funciona</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <div class="nav-buttons">
+                <div class="language-selector">
+                    <a href="#" class="active">ES</a><span>|</span><a href="#">EN</a>
+                </div>
+                
+                {% if current_user.is_authenticated %}
+                    <span style="color: #484A47;"><i class="fas fa-user" style="color: #D84731;"></i> {{ current_user.nombre }}</span>
+                    {% if current_user.tipo_usuario == 'admin' %}
+                        <a href="/admin" class="btn btn-outline">Admin</a>
+                    {% endif %}
+                    <a href="/perfil" class="btn btn-outline">Perfil</a>
+                    <a href="/carrito" class="btn btn-outline">Carrito</a>
+                    <a href="/logout" class="btn btn-primary">Salir</a>
+                {% else %}
+                    <a href="/login" class="btn btn-outline">Iniciar Sesión</a>
+                    <a href="/registro" class="btn btn-primary">Regístrate</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>KOOK</h3>
+                    <p>Cocina sin errores con ingredientes pre-medidos.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Enlaces</h3>
+                    <ul>
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/recetas">Recetas</a></li>
+                        <li><a href="/como-funciona">Cómo funciona</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> hola@kook.com</li>
+                        <li><i class="fas fa-phone"></i> +34 910 123 456</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 KOOK. Proyecto DAM/DAW.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        setTimeout(function() {
+            document.querySelectorAll('.flash-success, .flash-error').forEach(function(msg) {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.style.display = 'none', 500);
+            });
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

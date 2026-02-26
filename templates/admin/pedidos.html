@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Pedidos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="color: #D84731; margin-bottom: 30px;">Gestionar Pedidos</h1>
+    
+    <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #F2F7F2;">
+                    <th style="padding: 12px; text-align: left;">ID Pedido</th>
+                    <th style="padding: 12px; text-align: left;">Cliente</th>
+                    <th style="padding: 12px; text-align: left;">Fecha</th>
+                    <th style="padding: 12px; text-align: left;">Total</th>
+                    <th style="padding: 12px; text-align: left;">Estado</th>
+                    <th style="padding: 12px; text-align: left;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">#{{ pedido.pedido_id }}</td>
+                    <td style="padding: 12px;">{{ pedido.nombre }} {{ pedido.apellidos }}</td>
+                    <td style="padding: 12px;">{{ pedido.fecha_pedido.strftime('%d/%m/%Y') }}</td>
+                    <td style="padding: 12px;">{{ pedido.total }}€</td>
+                    <td style="padding: 12px;">
+                        <select onchange="cambiarEstado({{ pedido.pedido_id }}, this.value)" style="padding: 5px; border-radius: 5px;">
+                            <option value="pendiente" {% if pedido.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="preparando" {% if pedido.estado == 'preparando' %}selected{% endif %}>Preparando</option>
+                            <option value="enviado" {% if pedido.estado == 'enviado' %}selected{% endif %}>Enviado</option>
+                            <option value="entregado" {% if pedido.estado == 'entregado' %}selected{% endif %}>Entregado</option>
+                            <option value="cancelado" {% if pedido.estado == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                        </select>
+                    </td>
+                    <td style="padding: 12px;">
+                        <a href="/admin/pedidos/{{ pedido.pedido_id }}" style="color: #2EC4B6; text-decoration: none;">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function cambiarEstado(pedidoId, nuevoEstado) {
+    if(confirm('¿Cambiar estado del pedido #' + pedidoId + ' a ' + nuevoEstado + '?')) {
+        window.location.href = '/admin/pedidos/cambiar-estado/' + pedidoId + '/' + nuevoEstado;
+    }
+}
+</script>
+{% endblock %}

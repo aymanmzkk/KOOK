@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Recetas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #D84731;">Gestionar Recetas</h1>
+        <a href="/admin/recetas/nueva" class="btn btn-primary" style="text-decoration: none;">+ Nueva Receta</a>
+    </div>
+    
+    <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #F2F7F2;">
+                    <th style="padding: 12px; text-align: left;">ID</th>
+                    <th style="padding: 12px; text-align: left;">Nombre</th>
+                    <th style="padding: 12px; text-align: left;">Categoría</th>
+                    <th style="padding: 12px; text-align: left;">Dificultad</th>
+                    <th style="padding: 12px; text-align: left;">Tiempo</th>
+                    <th style="padding: 12px; text-align: left;">Precio</th>
+                    <th style="padding: 12px; text-align: left;">Activa</th>
+                    <th style="padding: 12px; text-align: left;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for receta in recetas %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">{{ receta.receta_id }}</td>
+                    <td style="padding: 12px;">{{ receta.nombre }}</td>
+                    <td style="padding: 12px;">{{ receta.categoria }}</td>
+                    <td style="padding: 12px;">{{ receta.dificultad }}</td>
+                    <td style="padding: 12px;">{{ receta.tiempo_preparacion }} min</td>
+                    <td style="padding: 12px;">{{ receta.precio_venta }}€</td>
+                    <td style="padding: 12px;">
+                        {% if receta.activa %}
+                        <span style="color: green; font-weight: bold;">✓</span>
+                        {% else %}
+                        <span style="color: red; font-weight: bold;">✗</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        <a href="/admin/recetas/editar/{{ receta.receta_id }}" style="color: #2EC4B6; margin-right: 10px; text-decoration: none;">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="/admin/recetas/eliminar/{{ receta.receta_id }}" style="color: #D84731; text-decoration: none;" onclick="return confirm('¿Seguro que quieres eliminar esta receta?')">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

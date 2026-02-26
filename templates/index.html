@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}KOOK - Cocina con medidas perfectas{% endblock %}
+
+{% block content %}
+<section style="background: linear-gradient(rgba(72,74,71,0.85), rgba(72,74,71,0.85)), url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center; color: white; padding: 100px 0; text-align: center; border-radius: 0 0 20px 20px;">
+    <div class="container">
+        <h1 style="font-size: 48px; margin-bottom: 20px;">Cocina como un chef con medidas perfectas</h1>
+        <p style="font-size: 20px; max-width: 700px; margin: 0 auto 30px;">KOOK te envía todos los ingredientes pre-medidos. Todo incluido, hasta la última pizca de sal.</p>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <a href="/recetas" class="btn btn-primary">Ver recetas</a>
+            <a href="/como-funciona" class="btn btn-outline">Cómo funciona</a>
+        </div>
+    </div>
+</section>
+
+<section style="padding: 60px 0;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h2 style="font-size: 36px;">¿Por qué elegir KOOK?</h2>
+            <p style="color: #666;">La única app que elimina las adivinanzas de la cocina</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
+                <i class="fas fa-weight" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+                <h3>Ingredientes Pre-Medidos</h3>
+                <p>Cada ingrediente viene en la cantidad exacta.</p>
+            </div>
+            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
+                <i class="fas fa-recycle" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+                <h3>Cero Desperdicio</h3>
+                <p>Solo recibes lo que necesitas.</p>
+            </div>
+            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
+                <i class="fas fa-clipboard-check" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+                <h3>Instrucciones Infalibles</h3>
+                <p>Pasos detallados, perfecto para principiantes.</p>
+            </div>
+            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
+                <i class="fas fa-shipping-fast" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+                <h3>Entrega a Domicilio</h3>
+                <p>Recibe tu KOOK Box fresca en casa.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section style="background-color: #484A47; color: white; padding: 80px 0; text-align: center; border-radius: 20px; margin: 60px 0;">
+    <div class="container">
+        <h2 style="font-size: 36px;">¿Listo para cocinar sin errores?</h2>
+        <p style="font-size: 18px; max-width: 700px; margin: 0 auto 30px;">Únete a miles de personas que ya cocinan como chefs.</p>
+        <a href="/registro" class="btn btn-primary" style="background-color: white; color: #484A47;">Empieza ahora</a>
+    </div>
+</section>
+{% endblock %}
