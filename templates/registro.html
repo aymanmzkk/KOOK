@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}KOOK - Regístrate{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+        <h1 style="color: #D84731; text-align: center; margin-bottom: 30px;">Crear Cuenta</h1>
+        
+        <form method="POST" action="/registro">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px;">Nombre</label>
+                    <input type="text" name="nombre" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px;">Apellidos</label>
+                    <input type="text" name="apellidos" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px;">Email</label>
+                <input type="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px;">Teléfono</label>
+                <input type="tel" name="telefono" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px;">Dirección</label>
+                <input type="text" name="direccion" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px;">Contraseña</label>
+                <input type="password" name="password" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px;">Confirmar Contraseña</label>
+                <input type="password" name="confirm_password" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="acepto" required>
+                    <span>Acepto la <a href="/privacidad" style="color: #D84731;">política de privacidad</a></span>
+                </label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px;">Registrarse</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 20px; color: #666;">
+            ¿Ya tienes cuenta? <a href="/login" style="color: #D84731; text-decoration: none;">Inicia sesión</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

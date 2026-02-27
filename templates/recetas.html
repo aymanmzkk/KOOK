@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Recetas - KOOK{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="color: #D84731; margin-bottom: 30px; font-size: 36px;">🍳 Nuestras Recetas</h1>
+    
+    {% if recetas %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
+        {% for receta in recetas %}
+        <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-top: 5px solid #D84731;">
+            <h3 style="color: #484A47; font-size: 22px; margin-bottom: 10px;">{{ receta.nombre }}</h3>
+            <p style="color: #666; margin-bottom: 15px;">{{ receta.descripcion }}</p>
+            
+            <div style="display: flex; justify-content: space-between; color: #777; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+                <span>⏱️ {{ receta.tiempo_preparacion }} min</span>
+                <span>👥 {{ receta.porciones }} pers</span>
+                <span>📊 {{ receta.dificultad }}</span>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <a href="/receta/{{ receta.receta_id }}" class="btn btn-outline" style="flex: 1; text-align: center; text-decoration: none; padding: 10px;">
+                    Ver detalles
+                </a>
+                <a href="/add-to-cart/{{ receta.receta_id }}" class="btn btn-primary" style="flex: 1; text-align: center; text-decoration: none; padding: 10px;">
+                    <i class="fas fa-cart-plus"></i> Añadir
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 15px;">
+        <i class="fas fa-utensils" style="font-size: 80px; color: #ddd; margin-bottom: 20px;"></i>
+        <h2 style="color: #484A47; margin-bottom: 10px;">No hay recetas disponibles</h2>
+        <p style="color: #666;">Pronto añadiremos nuevas recetas para ti.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

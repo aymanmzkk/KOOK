@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}KOOK - Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px;">
+    <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+        <h1 style="color: #D84731; text-align: center; margin-bottom: 30px;">Iniciar Sesión</h1>
+        
+        <form method="POST" action="/login">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #484A47;">Email</label>
+                <input type="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #484A47;">Contraseña</label>
+                <input type="password" name="password" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px;">Entrar</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 20px; color: #666;">
+            ¿No tienes cuenta? <a href="/registro" style="color: #D84731; text-decoration: none;">Regístrate</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
