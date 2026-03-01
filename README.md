@@ -18,11 +18,9 @@ KOOK es una aplicación web que permite a usuarios pedir kits de cocina con ingr
 ## 📊 Estructura del Proyecto
 kook-app/
 ├── app.py # Aplicación principal Flask
-├── requirements.txt # Dependencias Python
-├── README.md # Documentación
-├── static/ # Archivos estáticos
+├── database/ # Scripts SQL 
 ├── templates/ # Plantillas HTML
-└── database/ # Scripts SQL
+└── README.md # Documentación
 
 ## 👥 Autores
 - Ayman Mouzakki - DAM1 - CEACFP
