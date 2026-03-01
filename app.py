@@ -5,18 +5,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
 import os
 
-# FORZAR LA RUTA DE TEMPLATES
+# Configuración de templates
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=template_dir)
-
-# Opcional: imprimir para verificar
-print(f"✅ Templates buscando en: {template_dir}")
-print(f"✅ ¿Existe? {os.path.exists(template_dir)}")
-
-app.secret_key = 'clave-secreta-muy-dificil-koook-2026-para-proyecto-dam'
+app.secret_key = 'clave-secreta-koook-2026'
 app.permanent_session_lifetime = timedelta(days=7)
 
-# Configuración de la base de datos
+# Configuración BD
 db_config = {
     'host': 'localhost',
     'user': 'usuario-kook',
@@ -26,30 +21,25 @@ db_config = {
 }
 
 # ======================================================
-# FUNCIONES DE BASE DE DATOS (con mysql.connector directo)
+# FUNCIONES BD
 # ======================================================
 
-# Registrar nuevo usuario
+def get_connection():
+    return mysql.connector.connect(**db_config)
+
+# Registrar usuario
 def registrar_usuario(nombre, apellidos, email, telefono, direccion, password):
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor()
-        
         password_hash = generate_password_hash(password)
-        
-        sql = """
-            INSERT INTO usuarios 
-            (nombre, apellidos, correo_electronico, telefono, direccion, contrasenya, tipo_usuario)
-            VALUES (%s, %s, %s, %s, %s, %s, 'cliente')
-        """
-        valores = (nombre, apellidos, email, telefono, direccion, password_hash)
-        
-        cursor.execute(sql, valores)
+        sql = """INSERT INTO usuarios (nombre, apellidos, correo_electronico, telefono, direccion, contrasenya, tipo_usuario) 
+                 VALUES (%s, %s, %s, %s, %s, %s, 'cliente')"""
+        cursor.execute(sql, (nombre, apellidos, email, telefono, direccion, password_hash))
         conn.commit()
-        
         return cursor.lastrowid
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+    except Exception as e:
+        print(f"Error: {e}")
         return None
     finally:
         if conn.is_connected():
@@ -59,16 +49,12 @@ def registrar_usuario(nombre, apellidos, email, telefono, direccion, password):
 # Buscar usuario por email
 def obtener_usuario_por_email(email):
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        sql = "SELECT * FROM usuarios WHERE correo_electronico = %s"
-        cursor.execute(sql, (email,))
-        usuario = cursor.fetchone()
-        
-        return usuario
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        cursor.execute("SELECT * FROM usuarios WHERE correo_electronico = %s", (email,))
+        return cursor.fetchone()
+    except Exception as e:
+        print(f"Error: {e}")
         return None
     finally:
         if conn.is_connected():
@@ -79,22 +65,59 @@ def obtener_usuario_por_email(email):
 def verificar_password(password_hash, password_plano):
     return check_password_hash(password_hash, password_plano)
 
-# Obtener receta por ID para carrito
-def obtener_receta_por_id(receta_id):
+# Obtener recetas
+def obtener_recetas():
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT receta_id, nombre, descripcion, dificultad, tiempo_preparacion, porciones, precio_venta FROM recetas WHERE activa = 1")
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error: {e}")
+        return []
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+# Obtener detalle receta
+def obtener_detalle_receta(receta_id):
+    try:
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         
-        cursor.execute("""
-            SELECT receta_id, nombre, precio_venta 
-            FROM recetas 
-            WHERE receta_id = %s AND activa = 1
-        """, (receta_id,))
-        
+        cursor.execute("""SELECT r.*, c.nombre as categoria FROM recetas r 
+                          JOIN categorias c ON r.categoria_id = c.categoria_id 
+                          WHERE r.receta_id = %s AND r.activa = 1""", (receta_id,))
         receta = cursor.fetchone()
+        
+        if receta:
+            cursor.execute("""SELECT i.nombre, ri.cantidad, i.unidad FROM receta_ingredientes ri 
+                              JOIN ingredientes i ON ri.ingrediente_id = i.ingrediente_id 
+                              WHERE ri.receta_id = %s""", (receta_id,))
+            receta['ingredientes'] = cursor.fetchall()
+            
+            cursor.execute("SELECT numero_paso, descripcion FROM pasos_receta WHERE receta_id = %s ORDER BY numero_paso", (receta_id,))
+            receta['pasos'] = cursor.fetchall()
+        
         return receta
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+# Obtener receta para carrito
+def obtener_receta_por_id(receta_id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT receta_id, nombre, precio_venta FROM recetas WHERE receta_id = %s AND activa = 1", (receta_id,))
+        return cursor.fetchone()
+    except Exception as e:
+        print(f"Error: {e}")
         return None
     finally:
         if conn.is_connected():
@@ -104,166 +127,130 @@ def obtener_receta_por_id(receta_id):
 # Crear pedido
 def crear_pedido(usuario_id, direccion_envio, items_carrito):
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor()
         
         subtotal = sum(item['cantidad'] * item['precio'] for item in items_carrito)
-        gastos_envio = 3.99
-        total = subtotal + gastos_envio
+        total = subtotal + 3.99
         
-        sql_pedido = """
-            INSERT INTO pedidos (usuario_id, fecha_entrega, estado, total, direccion_envio)
-            VALUES (%s, DATE_ADD(CURDATE(), INTERVAL 2 DAY), 'pendiente', %s, %s)
-        """
-        cursor.execute(sql_pedido, (usuario_id, total, direccion_envio))
+        cursor.execute("""INSERT INTO pedidos (usuario_id, fecha_entrega, estado, total, direccion_envio) 
+                          VALUES (%s, DATE_ADD(CURDATE(), INTERVAL 2 DAY), 'pendiente', %s, %s)""", 
+                       (usuario_id, total, direccion_envio))
         pedido_id = cursor.lastrowid
         
-        sql_detalle = """
-            INSERT INTO detalles_pedido (pedido_id, receta_id, cantidad, precio_unitario)
-            VALUES (%s, %s, %s, %s)
-        """
         for item in items_carrito:
-            cursor.execute(sql_detalle, (pedido_id, item['receta_id'], item['cantidad'], item['precio']))
+            cursor.execute("INSERT INTO detalles_pedido (pedido_id, receta_id, cantidad, precio_unitario) VALUES (%s, %s, %s, %s)", 
+                          (pedido_id, item['receta_id'], item['cantidad'], item['precio']))
         
         conn.commit()
         return pedido_id
-        
-    except mysql.connector.Error as err:
-        print(f"Error al crear pedido: {err}")
-        if conn:
-            conn.rollback()
+    except Exception as e:
+        print(f"Error: {e}")
         return None
     finally:
         if conn.is_connected():
             cursor.close()
             conn.close()
 
-# Obtener pedidos de un usuario
+# Obtener pedidos usuario
 def obtener_pedidos_usuario(usuario_id):
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("""
-            SELECT p.*, 
-                   (SELECT COUNT(*) FROM detalles_pedido WHERE pedido_id = p.pedido_id) as num_recetas
-            FROM pedidos p
-            WHERE p.usuario_id = %s
-            ORDER BY p.fecha_pedido DESC
-        """, (usuario_id,))
-        
-        pedidos = cursor.fetchall()
-        return pedidos
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        cursor.execute("SELECT * FROM pedidos WHERE usuario_id = %s ORDER BY fecha_pedido DESC", (usuario_id,))
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error: {e}")
         return []
     finally:
         if conn.is_connected():
             cursor.close()
             conn.close()
 
-# Obtener todas las recetas activas
-def obtener_recetas():
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("""
-            SELECT receta_id, nombre, descripcion, dificultad, 
-                   tiempo_preparacion, porciones, precio_venta
-            FROM recetas 
-            WHERE activa = 1
-        """)
-        
-        recetas = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return recetas
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return []
-
-# Obtener detalle completo de una receta
-def obtener_detalle_receta(receta_id):
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("""
-            SELECT r.*, c.nombre as categoria 
-            FROM recetas r
-            JOIN categorias c ON r.categoria_id = c.categoria_id
-            WHERE r.receta_id = %s AND r.activa = 1
-        """, (receta_id,))
-        
-        receta = cursor.fetchone()
-        
-        if receta:
-            cursor.execute("""
-                SELECT i.nombre, ri.cantidad, i.unidad
-                FROM receta_ingredientes ri
-                JOIN ingredientes i ON ri.ingrediente_id = i.ingrediente_id
-                WHERE ri.receta_id = %s
-            """, (receta_id,))
-            receta['ingredientes'] = cursor.fetchall()
-            
-            cursor.execute("""
-                SELECT numero_paso, descripcion
-                FROM pasos_receta
-                WHERE receta_id = %s
-                ORDER BY numero_paso
-            """, (receta_id,))
-            receta['pasos'] = cursor.fetchall()
-        
-        return receta
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return None
-    finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
-
-# Obtener estadísticas para admin
+# Obtener estadísticas admin
 def obtener_estadisticas_admin():
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
         cursor.execute("SELECT COUNT(*) as total FROM usuarios")
-        total_usuarios = cursor.fetchone()['total']
-        
+        usuarios = cursor.fetchone()['total']
         cursor.execute("SELECT COUNT(*) as total FROM recetas")
-        total_recetas = cursor.fetchone()['total']
-        
+        recetas = cursor.fetchone()['total']
         cursor.execute("SELECT COUNT(*) as total FROM pedidos")
-        total_pedidos = cursor.fetchone()['total']
-        
+        pedidos = cursor.fetchone()['total']
         cursor.execute("SELECT COUNT(*) as total FROM pedidos WHERE estado = 'pendiente'")
-        pedidos_pendientes = cursor.fetchone()['total']
-        
-        cursor.close()
-        conn.close()
-        
-        return {
-            'total_usuarios': total_usuarios,
-            'total_recetas': total_recetas,
-            'total_pedidos': total_pedidos,
-            'pedidos_pendientes': pedidos_pendientes
-        }
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        pendientes = cursor.fetchone()['total']
+        return {'total_usuarios': usuarios, 'total_recetas': recetas, 'total_pedidos': pedidos, 'pedidos_pendientes': pendientes}
+    except Exception as e:
+        print(f"Error: {e}")
         return None
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+# Obtener categorías
+def obtener_categorias():
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM categorias ORDER BY nombre")
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error: {e}")
+        return []
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+# Guardar receta
+def guardar_receta(receta_id, nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        if receta_id:
+            sql = """UPDATE recetas SET nombre=%s, descripcion=%s, categoria_id=%s, dificultad=%s, 
+                     tiempo_preparacion=%s, porciones=%s, precio_venta=%s, activa=%s WHERE receta_id=%s"""
+            cursor.execute(sql, (nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa, receta_id))
+        else:
+            sql = """INSERT INTO recetas (nombre, descripcion, categoria_id, dificultad, tiempo_preparacion, porciones, precio_venta, activa) 
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+            cursor.execute(sql, (nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa))
+            receta_id = cursor.lastrowid
+        conn.commit()
+        return receta_id
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+# Eliminar receta
+def eliminar_receta(receta_id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE recetas SET activa = 0 WHERE receta_id = %s", (receta_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 # ======================================================
-# CONFIGURACIÓN FLASK-LOGIN
+# CONFIGURACIÓN LOGIN
 # ======================================================
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-login_manager.login_message = 'Por favor, inicia sesión para acceder a esta página.'
-login_manager.login_message_category = 'error'
 
 class User(UserMixin):
     def __init__(self, id, nombre, email, tipo_usuario):
@@ -275,23 +262,19 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM usuarios WHERE usuario_id = %s", (user_id,))
         user_data = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        
         if user_data:
-            return User(
-                id=user_data['usuario_id'],
-                nombre=user_data['nombre'],
-                email=user_data['correo_electronico'],
-                tipo_usuario=user_data['tipo_usuario']
-            )
+            return User(user_data['usuario_id'], user_data['nombre'], user_data['correo_electronico'], user_data['tipo_usuario'])
         return None
     except:
         return None
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 # ======================================================
 # RUTAS PÚBLICAS
@@ -305,15 +288,12 @@ def home():
 def como_funciona():
     return render_template('como_funciona.html')
 
-@app.route('/contacto', methods=['GET', 'POST'])
+@app.route('/contacto')
 def contacto():
-    if request.method == 'POST':
-        flash('Mensaje enviado correctamente. Te responderemos pronto.', 'success')
-        return redirect(url_for('contacto'))
     return render_template('contacto.html')
 
 # ======================================================
-# RUTAS DE AUTENTICACIÓN
+# RUTAS AUTENTICACIÓN
 # ======================================================
 
 @app.route('/registro', methods=['GET', 'POST'])
@@ -325,29 +305,21 @@ def registro():
         telefono = request.form.get('telefono', '')
         direccion = request.form.get('direccion', '')
         password = request.form['password']
-        confirm_password = request.form['confirm_password']
+        confirm = request.form['confirm_password']
         
-        if password != confirm_password:
+        if password != confirm:
             flash('Las contraseñas no coinciden', 'error')
             return render_template('registro.html')
         
-        if len(password) < 6:
-            flash('La contraseña debe tener al menos 6 caracteres', 'error')
+        if obtener_usuario_por_email(email):
+            flash('Email ya registrado', 'error')
             return render_template('registro.html')
         
-        usuario_existente = obtener_usuario_por_email(email)
-        if usuario_existente:
-            flash('Ya existe un usuario con ese email', 'error')
-            return render_template('registro.html')
-        
-        user_id = registrar_usuario(nombre, apellidos, email, telefono, direccion, password)
-        
-        if user_id:
-            flash('Registro exitoso. Ahora puedes iniciar sesión.', 'success')
+        if registrar_usuario(nombre, apellidos, email, telefono, direccion, password):
+            flash('Registro exitoso. Inicia sesión.', 'success')
             return redirect(url_for('login'))
         else:
-            flash('Error en el registro. Inténtalo de nuevo.', 'error')
-            return render_template('registro.html')
+            flash('Error en el registro', 'error')
     
     return render_template('registro.html')
 
@@ -356,25 +328,14 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        
         usuario = obtener_usuario_por_email(email)
         
         if usuario and verificar_password(usuario['contrasenya'], password):
-            user = User(
-                id=usuario['usuario_id'],
-                nombre=usuario['nombre'],
-                email=usuario['correo_electronico'],
-                tipo_usuario=usuario['tipo_usuario']
-            )
-            login_user(user, remember=True)
-            
-            if usuario['tipo_usuario'] == 'admin':
-                return redirect(url_for('admin_dashboard'))
-            else:
-                return redirect(url_for('perfil'))
+            user = User(usuario['usuario_id'], usuario['nombre'], usuario['correo_electronico'], usuario['tipo_usuario'])
+            login_user(user)
+            return redirect(url_for('admin_dashboard') if usuario['tipo_usuario'] == 'admin' else url_for('perfil'))
         else:
             flash('Email o contraseña incorrectos', 'error')
-            return render_template('login.html')
     
     return render_template('login.html')
 
@@ -383,17 +344,16 @@ def login():
 def logout():
     logout_user()
     session.pop('carrito', None)
-    flash('Sesión cerrada correctamente', 'success')
+    flash('Sesión cerrada', 'success')
     return redirect(url_for('home'))
 
 # ======================================================
-# RUTAS DE RECETAS
+# RUTAS RECETAS
 # ======================================================
 
 @app.route('/recetas')
 def recetas():
-    recetas = obtener_recetas()
-    return render_template('recetas.html', recetas=recetas)
+    return render_template('recetas.html', recetas=obtener_recetas())
 
 @app.route('/receta/<int:receta_id>')
 def detalle_receta(receta_id):
@@ -403,7 +363,7 @@ def detalle_receta(receta_id):
     return render_template('detalle_receta.html', receta=receta)
 
 # ======================================================
-# RUTAS DEL CARRITO
+# RUTAS CARRITO
 # ======================================================
 
 @app.route('/add-to-cart/<int:receta_id>')
@@ -418,25 +378,15 @@ def add_to_cart(receta_id):
         return redirect(url_for('recetas'))
     
     carrito = session['carrito']
-    encontrado = False
-    
     for item in carrito:
         if item['receta_id'] == receta_id:
             item['cantidad'] += 1
-            encontrado = True
             break
-    
-    if not encontrado:
-        carrito.append({
-            'receta_id': receta_id,
-            'nombre': receta['nombre'],
-            'cantidad': 1,
-            'precio': float(receta['precio_venta']) if receta['precio_venta'] else 14.99
-        })
+    else:
+        carrito.append({'receta_id': receta_id, 'nombre': receta['nombre'], 'cantidad': 1, 'precio': float(receta['precio_venta'])})
     
     session['carrito'] = carrito
-    flash(f'¡{receta["nombre"]} añadida al carrito!', 'success')
-    
+    flash(f'{receta["nombre"]} añadida al carrito', 'success')
     return redirect(request.referrer or url_for('recetas'))
 
 @app.route('/carrito')
@@ -444,9 +394,7 @@ def add_to_cart(receta_id):
 def ver_carrito():
     carrito = session.get('carrito', [])
     subtotal = sum(item['cantidad'] * item['precio'] for item in carrito)
-    gastos_envio = 3.99
-    total = subtotal + gastos_envio
-    return render_template('carrito.html', carrito=carrito, subtotal=subtotal, total=total)
+    return render_template('carrito.html', carrito=carrito, subtotal=subtotal, total=subtotal + 3.99)
 
 @app.route('/update-cart/<int:receta_id>/<int:cantidad>')
 @login_required
@@ -457,7 +405,6 @@ def update_cart(receta_id, cantidad):
             if item['receta_id'] == receta_id:
                 if cantidad <= 0:
                     carrito.remove(item)
-                    flash('Receta eliminada del carrito', 'success')
                 else:
                     item['cantidad'] = cantidad
                 break
@@ -468,361 +415,234 @@ def update_cart(receta_id, cantidad):
 @login_required
 def remove_from_cart(receta_id):
     if 'carrito' in session:
-        carrito = session['carrito']
-        session['carrito'] = [item for item in carrito if item['receta_id'] != receta_id]
-        flash('Receta eliminada del carrito', 'success')
+        session['carrito'] = [item for item in session['carrito'] if item['receta_id'] != receta_id]
+    flash('Receta eliminada', 'success')
     return redirect(url_for('ver_carrito'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
 @login_required
 def checkout():
     carrito = session.get('carrito', [])
-    
     if not carrito:
-        flash('El carrito está vacío', 'error')
+        flash('Carrito vacío', 'error')
         return redirect(url_for('recetas'))
     
     subtotal = sum(item['cantidad'] * item['precio'] for item in carrito)
-    gastos_envio = 3.99
-    total = subtotal + gastos_envio
+    total = subtotal + 3.99
     
     if request.method == 'POST':
         direccion = request.form.get('direccion', '').strip()
-        
         if not direccion:
-            try:
-                conn = mysql.connector.connect(**db_config)
-                cursor = conn.cursor(dictionary=True)
-                cursor.execute("SELECT direccion FROM usuarios WHERE usuario_id = %s", (current_user.id,))
-                usuario = cursor.fetchone()
-                direccion = usuario.get('direccion', '') if usuario else ''
-                cursor.close()
-                conn.close()
-            except:
-                pass
-        
-        if not direccion:
-            flash('Por favor, proporciona una dirección de entrega', 'error')
+            flash('Dirección requerida', 'error')
             return render_template('checkout.html', carrito=carrito, subtotal=subtotal, total=total)
         
         pedido_id = crear_pedido(current_user.id, direccion, carrito)
-        
         if pedido_id:
             session.pop('carrito', None)
-            flash(f'¡Pedido #{pedido_id} realizado con éxito!', 'success')
+            flash(f'Pedido #{pedido_id} realizado', 'success')
             return redirect(url_for('perfil'))
         else:
-            flash('Error al procesar el pedido. Inténtalo de nuevo.', 'error')
-            return render_template('checkout.html', carrito=carrito, subtotal=subtotal, total=total)
+            flash('Error al procesar pedido', 'error')
     
     return render_template('checkout.html', carrito=carrito, subtotal=subtotal, total=total)
 
 # ======================================================
-# RUTAS DE PERFIL
+# RUTAS PERFIL
 # ======================================================
 
 @app.route('/perfil')
 @login_required
 def perfil():
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("""
-            SELECT usuario_id, nombre, apellidos, correo_electronico, 
-                   telefono, direccion, pais, fecha_registro
-            FROM usuarios WHERE usuario_id = %s
-        """, (current_user.id,))
-        
+        cursor.execute("SELECT * FROM usuarios WHERE usuario_id = %s", (current_user.id,))
         usuario = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        
         pedidos = obtener_pedidos_usuario(current_user.id)
-        
         return render_template('perfil.html', usuario=usuario, pedidos=pedidos)
     except Exception as e:
         return f"Error: {e}"
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 # ======================================================
-# RUTAS DE ADMINISTRACIÓN
+# RUTAS ADMIN
 # ======================================================
 
 @app.route('/admin')
 @login_required
 def admin_dashboard():
     if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos para acceder', 'error')
+        flash('Acceso denegado', 'error')
         return redirect(url_for('home'))
-    
-    stats = obtener_estadisticas_admin()
-    return render_template('admin/dashboard.html', **stats)
+    return render_template('admin/dashboard.html', **obtener_estadisticas_admin())
 
 @app.route('/admin/recetas')
 @login_required
 def admin_recetas():
     if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos para acceder', 'error')
+        flash('Acceso denegado', 'error')
         return redirect(url_for('home'))
     
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("""
-            SELECT r.*, c.nombre as categoria 
-            FROM recetas r
-            JOIN categorias c ON r.categoria_id = c.categoria_id
-            ORDER BY r.receta_id DESC
-        """)
-        
+        cursor.execute("""SELECT r.*, c.nombre as categoria FROM recetas r 
+                          JOIN categorias c ON r.categoria_id = c.categoria_id 
+                          ORDER BY r.receta_id DESC""")
         recetas = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        
         return render_template('admin/recetas.html', recetas=recetas)
     except Exception as e:
-        return f"Error al cargar las recetas: {e}"
+        return f"Error: {e}"
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 @app.route('/admin/usuarios')
 @login_required
 def admin_usuarios():
     if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos para acceder', 'error')
+        flash('Acceso denegado', 'error')
         return redirect(url_for('home'))
     
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("""
-            SELECT usuario_id, nombre, apellidos, correo_electronico, 
-                   telefono, pais, tipo_usuario, fecha_registro
-            FROM usuarios
-            ORDER BY fecha_registro DESC
-        """)
-        
-        usuarios = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        
-        return render_template('admin/usuarios.html', usuarios=usuarios)
+        cursor.execute("SELECT usuario_id, nombre, apellidos, correo_electronico, telefono, pais, tipo_usuario, fecha_registro FROM usuarios ORDER BY fecha_registro DESC")
+        return render_template('admin/usuarios.html', usuarios=cursor.fetchall())
     except Exception as e:
-        return f"Error al cargar los usuarios: {e}"
+        return f"Error: {e}"
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 @app.route('/admin/pedidos')
 @login_required
 def admin_pedidos():
     if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos para acceder', 'error')
+        flash('Acceso denegado', 'error')
         return redirect(url_for('home'))
     
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("""
-            SELECT p.*, u.nombre, u.apellidos 
-            FROM pedidos p
-            JOIN usuarios u ON p.usuario_id = u.usuario_id
-            ORDER BY p.fecha_pedido DESC
-        """)
-        
-        pedidos = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        
-        return render_template('admin/pedidos.html', pedidos=pedidos)
+        cursor.execute("SELECT p.*, u.nombre, u.apellidos FROM pedidos p JOIN usuarios u ON p.usuario_id = u.usuario_id ORDER BY p.fecha_pedido DESC")
+        return render_template('admin/pedidos.html', pedidos=cursor.fetchall())
     except Exception as e:
-        return f"Error al cargar los pedidos: {e}"
+        return f"Error: {e}"
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+@app.route('/admin/recetas/nueva', methods=['GET', 'POST'])
+@login_required
+def admin_receta_nueva():
+    if current_user.tipo_usuario != 'admin':
+        flash('Acceso denegado', 'error')
+        return redirect(url_for('home'))
+    
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        descripcion = request.form['descripcion']
+        categoria_id = request.form['categoria_id']
+        dificultad = request.form['dificultad']
+        tiempo = request.form['tiempo_preparacion']
+        porciones = request.form['porciones']
+        precio = request.form['precio_venta']
+        activa = 1 if request.form.get('activa') else 0
+        
+        if guardar_receta(None, nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa):
+            flash('Receta creada', 'success')
+        else:
+            flash('Error al crear receta', 'error')
+        return redirect(url_for('admin_recetas'))
+    
+    return render_template('admin/receta_form.html', receta=None, categorias=obtener_categorias())
+
+@app.route('/admin/recetas/editar/<int:receta_id>', methods=['GET', 'POST'])
+@login_required
+def admin_receta_editar(receta_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('Acceso denegado', 'error')
+        return redirect(url_for('home'))
+    
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        descripcion = request.form['descripcion']
+        categoria_id = request.form['categoria_id']
+        dificultad = request.form['dificultad']
+        tiempo = request.form['tiempo_preparacion']
+        porciones = request.form['porciones']
+        precio = request.form['precio_venta']
+        activa = 1 if request.form.get('activa') else 0
+        
+        if guardar_receta(receta_id, nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa):
+            flash('Receta actualizada', 'success')
+        else:
+            flash('Error al actualizar', 'error')
+        return redirect(url_for('admin_recetas'))
+    
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM recetas WHERE receta_id = %s", (receta_id,))
+        receta = cursor.fetchone()
+        return render_template('admin/receta_form.html', receta=receta, categorias=obtener_categorias())
+    except Exception as e:
+        flash(f'Error: {e}', 'error')
+        return redirect(url_for('admin_recetas'))
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+@app.route('/admin/recetas/eliminar/<int:receta_id>')
+@login_required
+def admin_receta_eliminar(receta_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('Acceso denegado', 'error')
+        return redirect(url_for('home'))
+    
+    if eliminar_receta(receta_id):
+        flash('Receta eliminada', 'success')
+    else:
+        flash('Error al eliminar', 'error')
+    return redirect(url_for('admin_recetas'))
 
 # ======================================================
-# RUTA DE PRUEBA
+# RUTA PRUEBA
 # ======================================================
 
 @app.route('/test-db')
 def test_db():
     try:
-        conn = mysql.connector.connect(**db_config)
+        conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM recetas")
         count = cursor.fetchone()[0]
-        cursor.close()
-        conn.close()
-        return f"✅ Conexión exitosa. Hay {count} recetas en la base de datos."
+        return f"✅ Conexión OK. {count} recetas en BD."
     except Exception as e:
-        return f"❌ Error de conexión: {e}"
+        return f"❌ Error: {e}"
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 # ======================================================
-# MANEJADOR DE ERRORES
+# ERRORES
 # ======================================================
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
-@app.errorhandler(500)
-def internal_server_error(e):
-    flash('Error interno del servidor. Inténtalo más tarde.', 'error')
-    return redirect(url_for('home'))
-
 # ======================================================
-# FUNCIONES ADICIONALES PARA ADMIN (CRUD COMPLETO)
-# ======================================================
-
-def obtener_categorias():
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM categorias ORDER BY nombre")
-        categorias = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return categorias
-    except Exception as e:
-        print(f"Error: {e}")
-        return []
-
-def guardar_receta(nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa, receta_id=None):
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        
-        if receta_id:  # Actualizar
-            sql = """
-                UPDATE recetas 
-                SET nombre=%s, descripcion=%s, categoria_id=%s, dificultad=%s, 
-                    tiempo_preparacion=%s, porciones=%s, precio_venta=%s, activa=%s
-                WHERE receta_id=%s
-            """
-            cursor.execute(sql, (nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa, receta_id))
-        else:  # Insertar nueva
-            sql = """
-                INSERT INTO recetas (nombre, descripcion, categoria_id, dificultad, tiempo_preparacion, porciones, precio_venta, activa)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(sql, (nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa))
-            receta_id = cursor.lastrowid
-        
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return receta_id
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-def eliminar_receta(receta_id):
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        
-        # Opción: Desactivar en lugar de eliminar (recomendado)
-        cursor.execute("UPDATE recetas SET activa = 0 WHERE receta_id = %s", (receta_id,))
-        
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return True
-    except Exception as e:
-        print(f"Error: {e}")
-        return False
-
-# ======================================================
-# RUTAS POST PARA ADMIN
-# ======================================================
-
-@app.route('/admin/recetas/nueva', methods=['GET', 'POST'])
-@login_required
-def admin_receta_nueva():
-    if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos', 'error')
-        return redirect(url_for('home'))
-    
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        descripcion = request.form['descripcion']
-        categoria_id = request.form['categoria_id']
-        dificultad = request.form['dificultad']
-        tiempo = request.form['tiempo_preparacion']
-        porciones = request.form['porciones']
-        precio = request.form['precio_venta']
-        activa = 1 if request.form.get('activa') else 0
-        
-        receta_id = guardar_receta(None, nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa)
-        
-        if receta_id:
-            flash('Receta creada correctamente', 'success')
-        else:
-            flash('Error al crear la receta', 'error')
-        
-        return redirect(url_for('admin_recetas'))
-    
-    # GET: mostrar formulario
-    categorias = obtener_categorias()
-    return render_template('admin/receta_form.html', receta=None, categorias=categorias)
-
-@app.route('/admin/recetas/editar/<int:receta_id>', methods=['GET', 'POST'])
-@login_required
-def admin_receta_editar(receta_id):
-    if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos', 'error')
-        return redirect(url_for('home'))
-    
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        descripcion = request.form['descripcion']
-        categoria_id = request.form['categoria_id']
-        dificultad = request.form['dificultad']
-        tiempo = request.form['tiempo_preparacion']
-        porciones = request.form['porciones']
-        precio = request.form['precio_venta']
-        activa = 1 if request.form.get('activa') else 0
-        
-        resultado = guardar_receta(receta_id, nombre, descripcion, categoria_id, dificultad, tiempo, porciones, precio, activa)
-        
-        if resultado:
-            flash('Receta actualizada correctamente', 'success')
-        else:
-            flash('Error al actualizar la receta', 'error')
-        
-        return redirect(url_for('admin_recetas'))
-    
-    # GET: mostrar formulario con datos
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM recetas WHERE receta_id = %s", (receta_id,))
-        receta = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        
-        if not receta:
-            flash('Receta no encontrada', 'error')
-            return redirect(url_for('admin_recetas'))
-        
-        categorias = obtener_categorias()
-        return render_template('admin/receta_form.html', receta=receta, categorias=categorias)
-    except Exception as e:
-        flash(f'Error: {e}', 'error')
-        return redirect(url_for('admin_recetas'))
-
-@app.route('/admin/recetas/eliminar/<int:receta_id>')
-@login_required
-def admin_receta_eliminar(receta_id):
-    if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos', 'error')
-        return redirect(url_for('home'))
-    
-    if eliminar_receta(receta_id):
-        flash('Receta eliminada/desactivada correctamente', 'success')
-    else:
-        flash('Error al eliminar la receta', 'error')
-    
-    return redirect(url_for('admin_recetas'))
-
-# ======================================================
-# INICIO DE LA APLICACIÓN
+# INICIO
 # ======================================================
 
 if __name__ == '__main__':
