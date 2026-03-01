@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Contacto - KOOK{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px;">
+    <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+        <h1 style="color: #D84731; text-align: center; margin-bottom: 10px;">Contacta con KOOK</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 40px;">Estamos aquí para ayudarte. Escríbenos y te responderemos lo antes posible.</p>
+        
+        <form method="POST" action="/contacto">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #484A47;">Nombre</label>
+                <input type="text" name="nombre" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #484A47;">Email</label>
+                <input type="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #484A47;">Asunto</label>
+                <input type="text" name="asunto" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #484A47;">Mensaje</label>
+                <textarea name="mensaje" rows="6" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px;">Enviar mensaje</button>
+        </form>
+        
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #eee;">
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center;">
+            <div>
+                <i class="fas fa-envelope" style="color: #D84731; font-size: 24px; margin-bottom: 10px;"></i>
+                <p style="color: #666;">kook@info.com</p>
+            </div>
+            <div>
+                <i class="fas fa-phone" style="color: #D84731; font-size: 24px; margin-bottom: 10px;"></i>
+                <p style="color: #666;">+34 910 123 456</p>
+            </div>
+            <div>
+                <i class="fas fa-map-marker-alt" style="color: #D84731; font-size: 24px; margin-bottom: 10px;"></i>
+                <p style="color: #666;">Valencia, España</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

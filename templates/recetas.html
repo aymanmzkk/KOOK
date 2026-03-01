@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <h1 style="color: #D84731; margin-bottom: 30px; font-size: 36px;">🍳 Nuestras Recetas</h1>
+    <h1 style="color: #D84731; margin-bottom: 30px; font-size: 36px;">Nuestras Recetas</h1>
     
     {% if recetas %}
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
@@ -14,9 +14,9 @@
             <p style="color: #666; margin-bottom: 15px;">{{ receta.descripcion }}</p>
             
             <div style="display: flex; justify-content: space-between; color: #777; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
-                <span>⏱️ {{ receta.tiempo_preparacion }} min</span>
-                <span>👥 {{ receta.porciones }} pers</span>
-                <span>📊 {{ receta.dificultad }}</span>
+                <span>Tiempo: {{ receta.tiempo_preparacion }} min</span>
+                <span>Personas: {{ receta.porciones }}</span>
+                <span>  Dificultad: {{ receta.dificultad }}</span>
             </div>
             
             <div style="display: flex; gap: 10px;">

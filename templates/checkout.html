@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Finalizar Compra - KOOK{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <h1 style="color: #D84731; margin-bottom: 30px;">Finalizar Compra</h1>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <!-- Resumen del pedido -->
+        <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <h2 style="color: #484A47; margin-bottom: 20px;">Resumen del pedido</h2>
+            
+            {% for item in carrito %}
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                <div>
+                    <strong>{{ item.nombre }}</strong>
+                    <span style="color: #666;"> x{{ item.cantidad }}</span>
+                </div>
+                <span>{{ "%.2f"|format(item.cantidad * item.precio) }}€</span>
+            </div>
+            {% endfor %}
+            
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee;">
+                <div style="display: flex; justify-content: space-between; font-size: 18px;">
+                    <strong>Total:</strong>
+                    <strong style="color: #D84731;">{{ "%.2f"|format(total) }}€</strong>
+                </div>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">
+                    * Gastos de envío: 3.99€ (incluidos)
+                </p>
+            </div>
+        </div>
+        
+        <!-- Formulario de envío -->
+        <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <h2 style="color: #484A47; margin-bottom: 20px;">Datos de envío</h2>
+            
+            <form method="POST">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; color: #484A47;">Dirección de entrega</label>
+                    <textarea 
+                        name="direccion" 
+                        rows="3" 
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                        placeholder="Calle, número, piso, ciudad, código postal"
+                    >{{ current_user.direccion if current_user.direccion else '' }}</textarea>
+                    <p style="color: #666; font-size: 12px; margin-top: 5px;">
+                        Si no rellenas este campo, usaremos la dirección de tu perfil.
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="terminos" required>
+                        <span style="color: #484A47;">Acepto los <a href="/terminos" style="color: #D84731;">términos y condiciones</a></span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 16px;">
+                    Confirmar pedido ({{ "%.2f"|format(total) }}€)
+                </button>
+            </form>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="/carrito" style="color: #666; text-decoration: none;">← Volver al carrito</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
