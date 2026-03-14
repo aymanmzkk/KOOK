@@ -80,34 +80,50 @@ def obtener_recetas():
             cursor.close()
             conn.close()
 
-# Obtener detalle receta
+# Obtener detalle completo de una receta
 def obtener_detalle_receta(receta_id):
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         
-        cursor.execute("""SELECT r.*, c.nombre as categoria FROM recetas r 
-                          JOIN categorias c ON r.categoria_id = c.categoria_id 
-                          WHERE r.receta_id = %s AND r.activa = 1""", (receta_id,))
+        # Obtener datos básicos de la receta
+        cursor.execute("""
+            SELECT r.*, c.nombre as categoria 
+            FROM recetas r
+            JOIN categorias c ON r.categoria_id = c.categoria_id
+            WHERE r.receta_id = %s AND r.activa = 1
+        """, (receta_id,))
+        
         receta = cursor.fetchone()
         
         if receta:
-            cursor.execute("""SELECT i.nombre, ri.cantidad, i.unidad FROM receta_ingredientes ri 
-                              JOIN ingredientes i ON ri.ingrediente_id = i.ingrediente_id 
-                              WHERE ri.receta_id = %s""", (receta_id,))
+            # Obtener ingredientes
+            cursor.execute("""
+                SELECT i.nombre, ri.cantidad, i.unidad
+                FROM receta_ingredientes ri
+                JOIN ingredientes i ON ri.ingrediente_id = i.ingrediente_id
+                WHERE ri.receta_id = %s
+            """, (receta_id,))
             receta['ingredientes'] = cursor.fetchall()
+            print(f"Ingredientes encontrados: {len(receta['ingredientes'])}")  # Debug
             
-            cursor.execute("SELECT numero_paso, descripcion FROM pasos_receta WHERE receta_id = %s ORDER BY numero_paso", (receta_id,))
+            # Obtener pasos
+            cursor.execute("""
+                SELECT numero_paso, descripcion
+                FROM pasos_receta
+                WHERE receta_id = %s
+                ORDER BY numero_paso
+            """, (receta_id,))
             receta['pasos'] = cursor.fetchall()
+            print(f"Pasos encontrados: {len(receta['pasos'])}")  # Debug
         
+        cursor.close()
+        conn.close()
         return receta
+        
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error en obtener_detalle_receta: {e}")
         return None
-    finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
 
 # Obtener receta para carrito
 def obtener_receta_por_id(receta_id):
@@ -360,6 +376,7 @@ def detalle_receta(receta_id):
     receta = obtener_detalle_receta(receta_id)
     if not receta:
         return "Receta no encontrada", 404
+    print(f"Receta cargada: {receta['nombre']}")  # Debug
     return render_template('detalle_receta.html', receta=receta)
 
 # ======================================================
