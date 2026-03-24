@@ -4,65 +4,63 @@
 
 {% block content %}
 <div class="container">
-    <a href="/recetas" class="btn-volver" style="display: inline-block; margin-bottom: 20px; color: #484A47; text-decoration: none;">
-        ← Volver a recetas
+    <a href="/recetas" style="display: inline-block; margin-bottom: 20px; color: #484A47; text-decoration: none;">
+        ← {{ t.detalle_volver }}
     </a>
     
     <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
-        <h1 style="color: #D84731; font-size: 36px; margin-bottom: 10px;">{{ receta.nombre }}</h1>
-        <p style="color: #666; font-size: 18px; margin-bottom: 20px;">{{ receta.descripcion }}</p>
+        <h1 style="color: #D84731; font-size: 36px;">{{ receta.nombre }}</h1>
+        <p style="color: #666; margin-bottom: 20px;">{{ receta.descripcion }}</p>
         
-        <div style="display: flex; gap: 30px; margin-bottom: 30px; padding: 20px; background-color: #F2F7F2; border-radius: 10px; flex-wrap: wrap;">
-            <div><strong>Tiempo:</strong> {{ receta.tiempo_preparacion }} minutos</div>
-            <div><strong>Porciones:</strong> {{ receta.porciones }} personas</div>
-            <div><strong>Dificultad:</strong> {{ receta.dificultad }}</div>
-            <div><strong>Categoría:</strong> {{ receta.categoria }}</div>
-            <div><strong>Precio:</strong> {{ receta.precio_venta }}€</div>
+        <div style="display: flex; gap: 20px; margin-bottom: 30px; padding: 15px; background: #F2F7F2; border-radius: 10px; flex-wrap: wrap;">
+            <span><strong>⏱️ {{ t.detalle_tiempo }}:</strong> {{ receta.tiempo_preparacion }} {{ t.detalle_minutos }}</span>
+            <span><strong>👥 {{ t.detalle_porciones }}:</strong> {{ receta.porciones }}</span>
+            <span><strong>📊 {{ t.detalle_dificultad }}:</strong> {{ receta.dificultad }}</span>
+            <span><strong>📋 {{ t.detalle_categoria }}:</strong> {{ receta.categoria }}</span>
+            <span><strong>💰 {{ t.detalle_precio }}:</strong> {{ receta.precio_venta }}€</span>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-            <!-- Columna izquierda: Ingredientes -->
             <div>
-                <h2 style="color: #484A47; margin-bottom: 20px; border-bottom: 2px solid #D84731; padding-bottom: 10px;">
-                    <i class="fas fa-shopping-basket"></i> Ingredientes
+                <h2 style="color: #484A47; border-bottom: 2px solid #D84731; padding-bottom: 10px;">
+                    <i class="fas fa-shopping-basket"></i> {{ t.detalle_ingredientes }}
                 </h2>
-                {% if receta.ingredientes and receta.ingredientes|length > 0 %}
-                <ul style="list-style: none;">
+                {% if receta.ingredientes %}
+                <ul style="list-style: none; margin-top: 20px;">
                     {% for ing in receta.ingredientes %}
                     <li style="padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
                         <span>{{ ing.nombre }}</span>
-                        <span style="font-weight: bold; color: #D84731;">{{ ing.cantidad }} {{ ing.unidad }}</span>
+                        <span style="color: #D84731; font-weight: bold;">{{ ing.cantidad }} {{ ing.unidad }}</span>
                     </li>
                     {% endfor %}
                 </ul>
                 {% else %}
-                <p style="color: #999; text-align: center; padding: 20px;">No hay ingredientes disponibles</p>
+                <p style="color: #999; margin-top: 20px;">{{ t.detalle_sin_ingredientes }}</p>
                 {% endif %}
             </div>
             
-            <!-- Columna derecha: Pasos -->
             <div>
-                <h2 style="color: #484A47; margin-bottom: 20px; border-bottom: 2px solid #D84731; padding-bottom: 10px;">
-                    <i class="fas fa-list-ol"></i> Preparación
+                <h2 style="color: #484A47; border-bottom: 2px solid #D84731; padding-bottom: 10px;">
+                    <i class="fas fa-list-ol"></i> {{ t.detalle_preparacion }}
                 </h2>
-                {% if receta.pasos and receta.pasos|length > 0 %}
-                <ol style="padding-left: 20px;">
+                {% if receta.pasos %}
+                <ol style="margin-top: 20px; padding-left: 20px;">
                     {% for paso in receta.pasos %}
                     <li style="margin-bottom: 15px; padding-left: 10px;">
-                        <strong style="color: #D84731;">Paso {{ paso.numero_paso }}:</strong>
+                        <strong style="color: #D84731;">{{ t.detalle_paso }} {{ paso.numero_paso }}:</strong>
                         <p style="margin-top: 5px;">{{ paso.descripcion }}</p>
                     </li>
                     {% endfor %}
                 </ol>
                 {% else %}
-                <p style="color: #999; text-align: center; padding: 20px;">No hay pasos disponibles</p>
+                <p style="color: #999; margin-top: 20px;">{{ t.detalle_sin_pasos }}</p>
                 {% endif %}
             </div>
         </div>
         
         <div style="margin-top: 40px; text-align: center;">
-            <a href="/add-to-cart/{{ receta.receta_id }}" class="btn btn-primary" style="padding: 15px 40px; font-size: 18px; text-decoration: none;">
-                <i class="fas fa-cart-plus"></i> Añadir al carrito
+            <a href="/add-to-cart/{{ receta.receta_id }}" class="btn btn-primary" style="padding: 12px 30px; text-decoration: none;">
+                <i class="fas fa-cart-plus"></i> {{ t.detalle_anadir_carrito }}
             </a>
         </div>
     </div>
