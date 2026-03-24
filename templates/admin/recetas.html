@@ -9,7 +9,7 @@
         <a href="/admin/recetas/nueva" class="btn btn-primary" style="text-decoration: none;">+ Nueva Receta</a>
     </div>
     
-    <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+    <div style="background: white; border-radius: 10px; padding: 20px;">
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #F2F7F2;">
@@ -34,17 +34,17 @@
                     <td style="padding: 12px;">{{ receta.precio_venta }}€</td>
                     <td style="padding: 12px;">
                         {% if receta.activa %}
-                        <span style="color: green; font-weight: bold;">✓</span>
+                        <span style="color: green;">✓</span>
                         {% else %}
-                        <span style="color: red; font-weight: bold;">✗</span>
+                        <span style="color: red;">✗</span>
                         {% endif %}
                     </td>
                     <td style="padding: 12px;">
-                        <a href="/admin/recetas/editar/{{ receta.receta_id }}" style="color: #2EC4B6; margin-right: 10px; text-decoration: none;">
-                            <i class="fas fa-edit"></i> Editar
+                        <a href="/admin/recetas/editar/{{ receta.receta_id }}" style="color: #2EC4B6; margin-right: 10px;">
+                            <i class="fas fa-edit"></i>
                         </a>
-                        <a href="/admin/recetas/eliminar/{{ receta.receta_id }}" style="color: #D84731; text-decoration: none;" onclick="return confirm('¿Seguro que quieres eliminar esta receta?')">
-                            <i class="fas fa-trash"></i> Eliminar
+                        <a href="/admin/recetas/eliminar/{{ receta.receta_id }}" style="color: #D84731;" onclick="return confirm('¿Eliminar esta receta?')">
+                            <i class="fas fa-trash"></i>
                         </a>
                     </td>
                 </tr>

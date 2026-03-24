@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}{% if receta %}Editar{% else %}Nueva{% endif %} Receta - KOOK{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <h1 style="color: #D84731; margin-bottom: 30px;">{% if receta %}Editar{% else %}Nueva{% endif %} Receta</h1>
+    
+    <div style="background: white; border-radius: 10px; padding: 30px;">
+        <form method="POST">
+            <!-- Datos básicos -->
+            <h2 style="color: #484A47; margin-bottom: 20px;">Datos básicos</h2>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Nombre</label>
+                <input type="text" name="nombre" value="{{ receta.nombre if receta else '' }}" required 
+                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;">Descripción</label>
+                <textarea name="descripcion" rows="3" 
+                          style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">{{ receta.descripcion if receta else '' }}</textarea>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label>Categoría</label>
+                    <select name="categoria_id" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        {% for cat in categorias %}
+                        <option value="{{ cat.categoria_id }}" {% if receta and receta.categoria_id == cat.categoria_id %}selected{% endif %}>
+                            {{ cat.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label>Dificultad</label>
+                    <select name="dificultad" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="facil" {% if receta and receta.dificultad == 'facil' %}selected{% endif %}>Fácil</option>
+                        <option value="medio" {% if receta and receta.dificultad == 'medio' %}selected{% endif %}>Medio</option>
+                        <option value="dificil" {% if receta and receta.dificultad == 'dificil' %}selected{% endif %}>Difícil</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Precio (€)</label>
+                    <input type="number" step="0.01" name="precio_venta" value="{{ receta.precio_venta if receta else '14.99' }}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label>Tiempo (minutos)</label>
+                    <input type="number" name="tiempo_preparacion" value="{{ receta.tiempo_preparacion if receta else '30' }}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label>Porciones</label>
+                    <input type="number" name="porciones" value="{{ receta.porciones if receta else '2' }}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+            </div>
+            
+            <!-- Ingredientes -->
+<h2 style="color: #484A47; margin: 30px 0 20px;">Ingredientes</h2>
+
+<div id="ingredientes-container">
+    {% if receta and receta.ingredientes %}
+        {% for ing in receta.ingredientes %}
+        <div class="ingrediente-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: center;">
+            <input type="text" name="ingrediente_nombre[]" value="{{ ing.nombre }}" placeholder="Nombre del ingrediente" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+            <input type="number" step="0.01" name="ingrediente_cantidad[]" value="{{ ing.cantidad }}" placeholder="Cantidad" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+            <select name="ingrediente_unidad[]" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                <option value="g" {% if ing.unidad == 'g' %}selected{% endif %}>gramos (g)</option>
+                <option value="kg" {% if ing.unidad == 'kg' %}selected{% endif %}>kilos (kg)</option>
+                <option value="ml" {% if ing.unidad == 'ml' %}selected{% endif %}>mililitros (ml)</option>
+                <option value="l" {% if ing.unidad == 'l' %}selected{% endif %}>litros (l)</option>
+                <option value="unidad" {% if ing.unidad == 'unidad' %}selected{% endif %}>unidad</option>
+                <option value="cucharada" {% if ing.unidad == 'cucharada' %}selected{% endif %}>cucharada</option>
+                <option value="cucharadita" {% if ing.unidad == 'cucharadita' %}selected{% endif %}>cucharadita</option>
+                <option value="pizca" {% if ing.unidad == 'pizca' %}selected{% endif %}>pizca</option>
+            </select>
+            <button type="button" class="btn-remove" style="background: #D84731; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Eliminar</button>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="ingrediente-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: center;">
+            <input type="text" name="ingrediente_nombre[]" placeholder="Nombre del ingrediente" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+            <input type="number" step="0.01" name="ingrediente_cantidad[]" placeholder="Cantidad" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+            <select name="ingrediente_unidad[]" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                <option value="g">gramos (g)</option>
+                <option value="kg">kilos (kg)</option>
+                <option value="ml">mililitros (ml)</option>
+                <option value="l">litros (l)</option>
+                <option value="unidad">unidad</option>
+                <option value="cucharada">cucharada</option>
+                <option value="cucharadita">cucharadita</option>
+                <option value="pizca">pizca</option>
+            </select>
+            <button type="button" class="btn-remove" style="background: #D84731; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Eliminar</button>
+        </div>
+    {% endif %}
+</div>
+
+<button type="button" id="add-ingrediente" class="btn btn-outline" style="margin-top: 10px;">+ Añadir ingrediente</button>
+
+            <button type="button" id="add-ingrediente" class="btn btn-outline" style="margin-top: 10px;">+ Añadir ingrediente</button>
+            
+            <!-- Pasos -->
+            <h2 style="color: #484A47; margin: 30px 0 20px;">Pasos de preparación</h2>
+            
+            <div id="pasos-container">
+                {% if receta and receta.pasos %}
+                    {% for paso in receta.pasos %}
+                    <div class="paso-row" style="margin-bottom: 15px;">
+                        <textarea name="paso_descripcion[]" rows="2" placeholder="Paso {{ loop.index }}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">{{ paso.descripcion }}</textarea>
+                        <button type="button" class="btn-remove-paso" style="background: #D84731; color: white; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; cursor: pointer;">Eliminar paso</button>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="paso-row" style="margin-bottom: 15px;">
+                        <textarea name="paso_descripcion[]" rows="2" placeholder="Paso 1" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                        <button type="button" class="btn-remove-paso" style="background: #D84731; color: white; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; cursor: pointer;">Eliminar paso</button>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <button type="button" id="add-paso" class="btn btn-outline" style="margin-top: 10px;">+ Añadir paso</button>
+            
+            <div style="margin: 30px 0 20px;">
+                <label>
+                    <input type="checkbox" name="activa" value="1" {% if not receta or receta.activa %}checked{% endif %}> Receta activa
+                </label>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button type="submit" class="btn btn-primary">Guardar receta</button>
+                <a href="/admin/recetas" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Añadir ingrediente
+document.getElementById('add-ingrediente').addEventListener('click', function() {
+    const container = document.getElementById('ingredientes-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'ingrediente-row';
+    newRow.style.cssText = 'display: grid; grid-template-columns: 2fr 1fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: center;';
+    newRow.innerHTML = `
+        <input type="text" name="ingrediente_nombre[]" placeholder="Nombre del ingrediente" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+        <input type="number" step="0.01" name="ingrediente_cantidad[]" placeholder="Cantidad" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+        <select name="ingrediente_unidad[]" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+            <option value="g">gramos (g)</option>
+            <option value="kg">kilos (kg)</option>
+            <option value="ml">mililitros (ml)</option>
+            <option value="l">litros (l)</option>
+            <option value="unidad">unidad</option>
+            <option value="cucharada">cucharada</option>
+            <option value="cucharadita">cucharadita</option>
+            <option value="pizca">pizca</option>
+        </select>
+        <button type="button" class="btn-remove" style="background: #D84731; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Eliminar</button>
+    `;
+    container.appendChild(newRow);
+    
+    // Añadir evento eliminar al nuevo botón
+    newRow.querySelector('.btn-remove').addEventListener('click', function() {
+        newRow.remove();
+    });
+});
+    
+    // Añadir paso
+    document.getElementById('add-paso').addEventListener('click', function() {
+        const container = document.getElementById('pasos-container');
+        const pasoCount = container.querySelectorAll('.paso-row').length + 1;
+        const newRow = document.createElement('div');
+        newRow.className = 'paso-row';
+        newRow.style.cssText = 'margin-bottom: 15px;';
+        newRow.innerHTML = `
+            <textarea name="paso_descripcion[]" rows="2" placeholder="Paso ${pasoCount}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+            <button type="button" class="btn-remove-paso" style="background: #D84731; color: white; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; cursor: pointer;">Eliminar paso</button>
+        `;
+        container.appendChild(newRow);
+        
+        newRow.querySelector('.btn-remove-paso').addEventListener('click', function() {
+            newRow.remove();
+        });
+    });
+    
+    // Eliminar pasos existentes
+    document.querySelectorAll('.btn-remove-paso').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.paso-row').remove();
+        });
+    });
+</script>
+{% endblock %}
