@@ -18,11 +18,11 @@ db_config = {
     'user': 'usuario-kook',
     'password': 'Kook2026$',
     'database': 'KOOK',
-    'port': 3306    
+    'port': 3306
 }
 
 # ======================================================
-# TRADUCCIONES DIRECTAS
+# TRADUCCIONES
 # ======================================================
 
 TRADUCCIONES = {
@@ -44,7 +44,7 @@ TRADUCCIONES = {
         'footer_derechos': 'Todos los derechos reservados.',
         'footer_proyecto': 'Proyecto educativo DAM/DAW.',
         'home_titulo': 'Cocina como un chef con medidas perfectas',
-        'home_subtitulo': 'KOOK te envía todos los ingredientes pre-medidos. Todo incluido, hasta la última pizca de sal.',
+        'home_subtitulo': 'KOOK te envía todos los ingredientes pre-medidos.',
         'home_ver_recetas': 'Ver recetas',
         'home_como_funciona': 'Cómo funciona',
         'home_por_que': '¿Por qué elegir KOOK?',
@@ -80,7 +80,6 @@ TRADUCCIONES = {
         'detalle_sin_pasos': 'No hay pasos disponibles',
         'carrito_titulo': 'Tu carrito',
         'carrito_vacio': 'Tu carrito está vacío',
-        'carrito_vacio_texto': 'Explora nuestras recetas y añade las que más te gusten.',
         'carrito_ver_recetas': 'Ver recetas',
         'carrito_receta': 'Receta',
         'carrito_precio': 'Precio',
@@ -92,8 +91,6 @@ TRADUCCIONES = {
         'carrito_seguir': 'Seguir comprando',
         'carrito_eliminar': 'Eliminar',
         'checkout_titulo': 'Finalizar Compra',
-        'checkout_resumen': 'Resumen del pedido',
-        'checkout_datos_envio': 'Datos de envío',
         'checkout_direccion': 'Dirección de entrega',
         'checkout_terminos': 'Acepto los términos y condiciones',
         'checkout_confirmar': 'Confirmar pedido',
@@ -122,7 +119,6 @@ TRADUCCIONES = {
         'perfil_direccion': 'Dirección',
         'perfil_pais': 'País',
         'perfil_miembro_desde': 'Miembro desde',
-        'perfil_estadisticas': 'Estadísticas',
         'perfil_pedidos_realizados': 'Pedidos realizados',
         'perfil_tipo_usuario': 'Tipo de usuario',
         'perfil_ultimos_pedidos': 'Últimos pedidos',
@@ -130,7 +126,6 @@ TRADUCCIONES = {
         'perfil_total': 'Total',
         'perfil_estado': 'Estado',
         'perfil_sin_pedidos': 'No tienes pedidos aún',
-        'perfil_explora_recetas': '¡Explora nuestras recetas!',
         'perfil_ver_recetas': 'Ver recetas',
         'perfil_cerrar_sesion': 'Cerrar sesión',
         'admin_dashboard': 'Panel de Administración',
@@ -142,8 +137,7 @@ TRADUCCIONES = {
         'admin_gestionar_recetas': 'Gestionar Recetas',
         'admin_gestionar_usuarios': 'Gestionar Usuarios',
         'admin_ver_pedidos': 'Ver Pedidos',
-        'admin_nueva_receta': 'Nueva Receta',
-        'mensaje': 'Mensaje'
+        'admin_nueva_receta': 'Nueva Receta'
     },
     'en': {
         'inicio': 'Home',
@@ -163,7 +157,7 @@ TRADUCCIONES = {
         'footer_derechos': 'All rights reserved.',
         'footer_proyecto': 'Educational project DAM/DAW.',
         'home_titulo': 'Cook like a chef with perfect measurements',
-        'home_subtitulo': 'KOOK sends you all pre-measured ingredients. Everything included, down to the last pinch of salt.',
+        'home_subtitulo': 'KOOK sends you all pre-measured ingredients.',
         'home_ver_recetas': 'View recipes',
         'home_como_funciona': 'How it works',
         'home_por_que': 'Why choose KOOK?',
@@ -199,7 +193,6 @@ TRADUCCIONES = {
         'detalle_sin_pasos': 'No steps available',
         'carrito_titulo': 'Your cart',
         'carrito_vacio': 'Your cart is empty',
-        'carrito_vacio_texto': 'Explore our recipes and add your favorites.',
         'carrito_ver_recetas': 'View recipes',
         'carrito_receta': 'Recipe',
         'carrito_precio': 'Price',
@@ -211,8 +204,6 @@ TRADUCCIONES = {
         'carrito_seguir': 'Continue shopping',
         'carrito_eliminar': 'Delete',
         'checkout_titulo': 'Checkout',
-        'checkout_resumen': 'Order summary',
-        'checkout_datos_envio': 'Shipping details',
         'checkout_direccion': 'Delivery address',
         'checkout_terminos': 'I accept the terms and conditions',
         'checkout_confirmar': 'Confirm order',
@@ -241,7 +232,6 @@ TRADUCCIONES = {
         'perfil_direccion': 'Address',
         'perfil_pais': 'Country',
         'perfil_miembro_desde': 'Member since',
-        'perfil_estadisticas': 'Statistics',
         'perfil_pedidos_realizados': 'Orders placed',
         'perfil_tipo_usuario': 'User type',
         'perfil_ultimos_pedidos': 'Recent orders',
@@ -249,7 +239,6 @@ TRADUCCIONES = {
         'perfil_total': 'Total',
         'perfil_estado': 'Status',
         'perfil_sin_pedidos': 'You have no orders yet',
-        'perfil_explora_recetas': 'Explore our recipes!',
         'perfil_ver_recetas': 'View recipes',
         'perfil_cerrar_sesion': 'Logout',
         'admin_dashboard': 'Administration Panel',
@@ -261,8 +250,7 @@ TRADUCCIONES = {
         'admin_gestionar_recetas': 'Manage Recipes',
         'admin_gestionar_usuarios': 'Manage Users',
         'admin_ver_pedidos': 'View Orders',
-        'admin_nueva_receta': 'New Recipe',
-        'mensaje': 'Message'
+        'admin_nueva_receta': 'New Recipe'
     }
 }
 
@@ -273,7 +261,6 @@ def load_translations(lang='es'):
 def change_language(lang):
     if lang in ['es', 'en']:
         session['language'] = lang
-        flash(f'Idioma cambiado a {lang}', 'success')
     return redirect(request.referrer or url_for('home'))
 
 # ======================================================
@@ -310,13 +297,10 @@ def obtener_usuario_por_email(email):
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        print(f"🔍 Buscando email: {email}")  # DEBUG
         cursor.execute("SELECT * FROM usuarios WHERE correo_electronico = %s", (email,))
-        resultado = cursor.fetchone()
-        print(f"✅ Resultado: {resultado}")  # DEBUG
-        return resultado
+        return cursor.fetchone()
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         return None
     finally:
         if cursor:
@@ -336,7 +320,7 @@ def obtener_recetas():
         cursor.execute("SELECT receta_id, nombre, descripcion, dificultad, tiempo_preparacion, porciones, precio_venta FROM recetas WHERE activa = 1")
         return cursor.fetchall()
     except Exception as e:
-        print(f"Error en obtener_recetas: {e}")
+        print(f"Error: {e}")
         return []
     finally:
         if cursor:
@@ -377,7 +361,7 @@ def obtener_detalle_receta(receta_id, lang='es'):
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
-            
+
 def obtener_receta_por_id(receta_id):
     conn = None
     cursor = None
@@ -437,30 +421,25 @@ def obtener_pedidos_usuario(usuario_id):
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
-            
+
 def obtener_estadisticas_admin():
     conn = None
     cursor = None
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
         cursor.execute("SELECT COUNT(*) as total FROM usuarios")
         usuarios = cursor.fetchone()
         total_usuarios = usuarios['total'] if usuarios else 0
-        
         cursor.execute("SELECT COUNT(*) as total FROM recetas")
         recetas = cursor.fetchone()
         total_recetas = recetas['total'] if recetas else 0
-        
         cursor.execute("SELECT COUNT(*) as total FROM pedidos")
         pedidos = cursor.fetchone()
         total_pedidos = pedidos['total'] if pedidos else 0
-        
         cursor.execute("SELECT COUNT(*) as total FROM pedidos WHERE estado = 'pendiente'")
         pendientes = cursor.fetchone()
         pedidos_pendientes = pendientes['total'] if pendientes else 0
-        
         return {
             'total_usuarios': total_usuarios,
             'total_recetas': total_recetas,
@@ -468,14 +447,14 @@ def obtener_estadisticas_admin():
             'pedidos_pendientes': pedidos_pendientes
         }
     except Exception as e:
-        print(f"Error en obtener_estadisticas_admin: {e}")
+        print(f"Error: {e}")
         return None
     finally:
         if cursor:
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
-            
+
 def obtener_categorias():
     conn = None
     cursor = None
@@ -513,26 +492,29 @@ def guardar_receta(receta_id, nombre, descripcion, categoria_id, dificultad, tie
             receta_id = cursor.lastrowid
         
         # Guardar ingredientes
-        if ingredientes:
+        if ingredientes is not None:
             # Eliminar ingredientes antiguos
             cursor.execute("DELETE FROM receta_ingredientes WHERE receta_id = %s", (receta_id,))
             
             # Insertar nuevos ingredientes
             for ing in ingredientes:
-                # Buscar o crear ingrediente
+                # Buscar si el ingrediente ya existe
                 cursor.execute("SELECT ingrediente_id FROM ingredientes WHERE nombre = %s", (ing['nombre'],))
                 ing_existente = cursor.fetchone()
+                
                 if ing_existente:
                     ing_id = ing_existente[0]
                 else:
+                    # Crear nuevo ingrediente
                     cursor.execute("INSERT INTO ingredientes (nombre, unidad) VALUES (%s, %s)", (ing['nombre'], ing['unidad']))
                     ing_id = cursor.lastrowid
                 
+                # Insertar en receta_ingredientes
                 cursor.execute("INSERT INTO receta_ingredientes (receta_id, ingrediente_id, cantidad) VALUES (%s, %s, %s)",
                               (receta_id, ing_id, ing['cantidad']))
         
         # Guardar pasos
-        if pasos:
+        if pasos is not None:
             # Eliminar pasos antiguos
             cursor.execute("DELETE FROM pasos_receta WHERE receta_id = %s", (receta_id,))
             
@@ -545,7 +527,8 @@ def guardar_receta(receta_id, nombre, descripcion, categoria_id, dificultad, tie
         return receta_id
     except Exception as e:
         print(f"Error en guardar_receta: {e}")
-        conn.rollback()
+        if conn:
+            conn.rollback()
         return None
     finally:
         if cursor:
@@ -608,7 +591,7 @@ def load_user(user_id):
             conn.close()
 
 # ======================================================
-# RUTAS PÚBLICAS (con traducciones manuales)
+# RUTAS PÚBLICAS
 # ======================================================
 
 @app.route('/')
@@ -672,17 +655,14 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        print(f"📧 Email recibido: {email}")  # DEBUG
         usuario = obtener_usuario_por_email(email)
-        print(f"👤 Usuario encontrado: {usuario}")  # DEBUG
         
-        if usuario:
+        if usuario and verificar_password(usuario['contrasenya'], password):
             user = User(usuario['usuario_id'], usuario['nombre'], usuario['correo_electronico'], usuario['tipo_usuario'])
             login_user(user)
-            flash(f'Bienvenido {usuario["nombre"]}', 'success')
             return redirect(url_for('admin_dashboard') if usuario['tipo_usuario'] == 'admin' else url_for('perfil'))
         else:
-            flash('Email no encontrado. Regístrate primero.', 'error')
+            flash('Email o contraseña incorrectos', 'error')
     
     return render_template('login.html', t=t, current_lang=lang)
 
@@ -702,8 +682,7 @@ def logout():
 def recetas():
     lang = session.get('language', 'es')
     t = load_translations(lang)
-    recetas = obtener_recetas()
-    return render_template('recetas.html', recetas=recetas, t=t, current_lang=lang)
+    return render_template('recetas.html', recetas=obtener_recetas(), t=t, current_lang=lang)
 
 @app.route('/receta/<int:receta_id>')
 def detalle_receta(receta_id):
@@ -776,28 +755,23 @@ def checkout():
     lang = session.get('language', 'es')
     t = load_translations(lang)
     carrito = session.get('carrito', [])
-    
     if not carrito:
-        flash(t['carrito_vacio'] if 'carrito_vacio' in t else 'El carrito está vacío', 'error')
+        flash(t['carrito_vacio'], 'error')
         return redirect(url_for('recetas'))
-    
     subtotal = sum(item['cantidad'] * item['precio'] for item in carrito)
     total = subtotal + 3.99
-    
     if request.method == 'POST':
         direccion = request.form.get('direccion', '').strip()
         if not direccion:
-            flash(t['flash_direccion_requerida'] if 'flash_direccion_requerida' in t else 'Por favor, proporciona una dirección de entrega', 'error')
+            flash(t['checkout_direccion'], 'error')
             return render_template('checkout.html', carrito=carrito, subtotal=subtotal, total=total, t=t, current_lang=lang)
-        
         pedido_id = crear_pedido(current_user.id, direccion, carrito)
         if pedido_id:
             session.pop('carrito', None)
             flash(f'¡Pedido #{pedido_id} realizado con éxito!', 'success')
             return redirect(url_for('perfil'))
         else:
-            flash(t['flash_pedido_error'] if 'flash_pedido_error' in t else 'Error al procesar el pedido', 'error')
-    
+            flash('Error al procesar el pedido', 'error')
     return render_template('checkout.html', carrito=carrito, subtotal=subtotal, total=total, t=t, current_lang=lang)
 
 # ======================================================
@@ -836,17 +810,9 @@ def admin_dashboard():
     
     lang = session.get('language', 'es')
     t = load_translations(lang)
-    
     stats = obtener_estadisticas_admin()
-    
-    # Si stats es None, usar valores por defecto
     if stats is None:
-        stats = {
-            'total_usuarios': 0,
-            'total_recetas': 0,
-            'total_pedidos': 0,
-            'pedidos_pendientes': 0
-        }
+        stats = {'total_usuarios': 0, 'total_recetas': 0, 'total_pedidos': 0, 'pedidos_pendientes': 0}
     
     return render_template('admin/dashboard.html', t=t, current_lang=lang, **stats)
 
@@ -856,8 +822,10 @@ def admin_recetas():
     if current_user.tipo_usuario != 'admin':
         flash('No tienes permisos', 'error')
         return redirect(url_for('home'))
+    
     lang = session.get('language', 'es')
     t = load_translations(lang)
+    
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
@@ -879,36 +847,19 @@ def admin_usuarios():
     if current_user.tipo_usuario != 'admin':
         flash('No tienes permisos', 'error')
         return redirect(url_for('home'))
+    
     lang = session.get('language', 'es')
     t = load_translations(lang)
+    
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT usuario_id, nombre, apellidos, correo_electronico, telefono, pais, tipo_usuario, fecha_registro FROM usuarios ORDER BY fecha_registro DESC")
         usuarios = cursor.fetchall()
+        print(f"Usuarios encontrados: {len(usuarios)}")  # DEBUG
         return render_template('admin/usuarios.html', usuarios=usuarios, t=t, current_lang=lang)
     except Exception as e:
-        return f"Error: {e}"
-    finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
-
-@app.route('/admin/pedidos')
-@login_required
-def admin_pedidos():
-    if current_user.tipo_usuario != 'admin':
-        flash('No tienes permisos', 'error')
-        return redirect(url_for('home'))
-    lang = session.get('language', 'es')
-    t = load_translations(lang)
-    try:
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT p.*, u.nombre, u.apellidos FROM pedidos p JOIN usuarios u ON p.usuario_id = u.usuario_id ORDER BY p.fecha_pedido DESC")
-        pedidos = cursor.fetchall()
-        return render_template('admin/pedidos.html', pedidos=pedidos, t=t, current_lang=lang)
-    except Exception as e:
+        print(f"Error: {e}")  # DEBUG
         return f"Error: {e}"
     finally:
         if conn.is_connected():
@@ -949,7 +900,7 @@ def admin_receta_nueva():
         # Procesar pasos
         pasos = []
         descripciones = request.form.getlist('paso_descripcion[]')
-        for i, desc in enumerate(descripciones):
+        for desc in descripciones:
             if desc.strip():
                 pasos.append({'descripcion': desc.strip()})
         
@@ -966,7 +917,6 @@ def admin_receta_nueva():
     t = load_translations(lang)
     categorias = obtener_categorias()
     return render_template('admin/receta_form.html', receta=None, categorias=categorias, t=t, current_lang=lang)
-
 
 @app.route('/admin/recetas/editar/<int:receta_id>', methods=['GET', 'POST'])
 @login_required
@@ -1002,7 +952,7 @@ def admin_receta_editar(receta_id):
         # Procesar pasos
         pasos = []
         descripciones = request.form.getlist('paso_descripcion[]')
-        for i, desc in enumerate(descripciones):
+        for desc in descripciones:
             if desc.strip():
                 pasos.append({'descripcion': desc.strip()})
         
@@ -1024,6 +974,319 @@ def admin_receta_editar(receta_id):
     t = load_translations(lang)
     categorias = obtener_categorias()
     return render_template('admin/receta_form.html', receta=receta, categorias=categorias, t=t, current_lang=lang)
+
+@app.route('/admin/recetas/eliminar/<int:receta_id>')
+@login_required
+def admin_receta_eliminar(receta_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    if eliminar_receta(receta_id):
+        flash('Receta eliminada correctamente', 'success')
+    else:
+        flash('Error al eliminar la receta', 'error')
+    return redirect(url_for('admin_recetas'))
+
+@app.route('/admin/usuarios/cambiar-tipo/<int:usuario_id>')
+@login_required
+def admin_usuario_cambiar_tipo(usuario_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    if usuario_id == current_user.id:
+        flash('No puedes cambiar tu propio tipo de usuario', 'error')
+        return redirect(url_for('admin_usuarios'))
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT tipo_usuario FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        usuario = cursor.fetchone()
+        
+        if usuario:
+            nuevo_tipo = 'admin' if usuario[0] == 'cliente' else 'cliente'
+            cursor.execute("UPDATE usuarios SET tipo_usuario = %s WHERE usuario_id = %s", (nuevo_tipo, usuario_id))
+            conn.commit()
+            flash(f'Usuario cambiado a {nuevo_tipo}', 'success')
+        else:
+            flash('Usuario no encontrado', 'error')
+    except Exception as e:
+        flash(f'Error: {e}', 'error')
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+    
+    return redirect(url_for('admin_usuarios'))
+
+@app.route('/admin/usuarios/eliminar/<int:usuario_id>')
+@login_required
+def admin_usuario_eliminar(usuario_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    if usuario_id == current_user.id:
+        flash('No puedes eliminar tu propia cuenta', 'error')
+        return redirect(url_for('admin_usuarios'))
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT nombre FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        usuario = cursor.fetchone()
+        
+        if usuario:
+            cursor.execute("DELETE FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+            conn.commit()
+            flash(f'Usuario {usuario[0]} eliminado correctamente', 'success')
+        else:
+            flash('Usuario no encontrado', 'error')
+    except Exception as e:
+        flash(f'Error: {e}', 'error')
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+    
+    return redirect(url_for('admin_usuarios'))
+
+@app.route('/admin/usuarios/nuevo', methods=['GET', 'POST'])
+@login_required
+def admin_usuario_nuevo():
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    lang = session.get('language', 'es')
+    t = load_translations(lang)
+    
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellidos = request.form['apellidos']
+        email = request.form['email']
+        telefono = request.form.get('telefono', '')
+        direccion = request.form.get('direccion', '')
+        pais = request.form.get('pais', 'España')
+        password = request.form['password']
+        tipo_usuario = request.form.get('tipo_usuario', 'cliente')
+        
+        if not password:
+            flash('La contraseña es obligatoria', 'error')
+            return render_template('admin/usuario_form.html', usuario=None, t=t, current_lang=lang)
+        
+        if len(password) < 6:
+            flash('La contraseña debe tener al menos 6 caracteres', 'error')
+            return render_template('admin/usuario_form.html', usuario=None, t=t, current_lang=lang)
+        
+        if obtener_usuario_por_email(email):
+            flash('Ya existe un usuario con ese email', 'error')
+            return render_template('admin/usuario_form.html', usuario=None, t=t, current_lang=lang)
+        
+        conn = None
+        cursor = None
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+            password_hash = generate_password_hash(password)
+            sql = """INSERT INTO usuarios (nombre, apellidos, correo_electronico, telefono, direccion, pais, contrasenya, tipo_usuario) 
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+            cursor.execute(sql, (nombre, apellidos, email, telefono, direccion, pais, password_hash, tipo_usuario))
+            conn.commit()
+            flash('Usuario creado correctamente', 'success')
+            return redirect(url_for('admin_usuarios'))
+        except Exception as e:
+            flash(f'Error: {e}', 'error')
+            return render_template('admin/usuario_form.html', usuario=None, t=t, current_lang=lang)
+        finally:
+            if cursor:
+                cursor.close()
+            if conn and conn.is_connected():
+                conn.close()
+    
+    return render_template('admin/usuario_form.html', usuario=None, t=t, current_lang=lang)
+
+
+@app.route('/admin/usuarios/editar/<int:usuario_id>', methods=['GET', 'POST'])
+@login_required
+def admin_usuario_editar(usuario_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    lang = session.get('language', 'es')
+    t = load_translations(lang)
+    
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellidos = request.form['apellidos']
+        email = request.form['email']
+        telefono = request.form.get('telefono', '')
+        direccion = request.form.get('direccion', '')
+        pais = request.form.get('pais', 'España')
+        password = request.form.get('password', '')
+        tipo_usuario = request.form.get('tipo_usuario', 'cliente')
+        
+        conn = None
+        cursor = None
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+            
+            if password:
+                password_hash = generate_password_hash(password)
+                sql = """UPDATE usuarios SET nombre=%s, apellidos=%s, correo_electronico=%s, telefono=%s, 
+                         direccion=%s, pais=%s, contrasenya=%s, tipo_usuario=%s WHERE usuario_id=%s"""
+                cursor.execute(sql, (nombre, apellidos, email, telefono, direccion, pais, password_hash, tipo_usuario, usuario_id))
+            else:
+                sql = """UPDATE usuarios SET nombre=%s, apellidos=%s, correo_electronico=%s, telefono=%s, 
+                         direccion=%s, pais=%s, tipo_usuario=%s WHERE usuario_id=%s"""
+                cursor.execute(sql, (nombre, apellidos, email, telefono, direccion, pais, tipo_usuario, usuario_id))
+            
+            conn.commit()
+            flash('Usuario actualizado correctamente', 'success')
+            return redirect(url_for('admin_usuarios'))
+        except Exception as e:
+            flash(f'Error: {e}', 'error')
+            return redirect(url_for('admin_usuarios'))
+        finally:
+            if cursor:
+                cursor.close()
+            if conn and conn.is_connected():
+                conn.close()
+    
+    # GET: obtener datos del usuario
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        usuario = cursor.fetchone()
+        
+        if not usuario:
+            flash('Usuario no encontrado', 'error')
+            return redirect(url_for('admin_usuarios'))
+        
+        return render_template('admin/usuario_form.html', usuario=usuario, t=t, current_lang=lang)
+    except Exception as e:
+        flash(f'Error: {e}', 'error')
+        return redirect(url_for('admin_usuarios'))
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+            
+@app.route('/admin/pedidos')
+@login_required
+def admin_pedidos():
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    lang = session.get('language', 'es')
+    t = load_translations(lang)
+    
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT p.*, u.nombre, u.apellidos 
+            FROM pedidos p 
+            JOIN usuarios u ON p.usuario_id = u.usuario_id 
+            ORDER BY p.fecha_pedido DESC
+        """)
+        pedidos = cursor.fetchall()
+        return render_template('admin/pedidos.html', pedidos=pedidos, t=t, current_lang=lang)
+    except Exception as e:
+        return f"Error: {e}"
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+@app.route('/admin/pedidos/ver/<int:pedido_id>')
+@login_required
+def admin_pedido_ver(pedido_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    lang = session.get('language', 'es')
+    t = load_translations(lang)
+    
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Obtener datos del pedido y usuario
+        cursor.execute("""
+            SELECT p.*, u.nombre, u.apellidos, u.correo_electronico
+            FROM pedidos p 
+            JOIN usuarios u ON p.usuario_id = u.usuario_id 
+            WHERE p.pedido_id = %s
+        """, (pedido_id,))
+        pedido = cursor.fetchone()
+        
+        if not pedido:
+            flash('Pedido no encontrado', 'error')
+            return redirect(url_for('admin_pedidos'))
+        
+        # Obtener detalles del pedido
+        cursor.execute("""
+            SELECT d.*, r.nombre
+            FROM detalles_pedido d
+            JOIN recetas r ON d.receta_id = r.receta_id
+            WHERE d.pedido_id = %s
+        """, (pedido_id,))
+        detalles = cursor.fetchall()
+        
+        return render_template('admin/pedido_detalle.html', pedido=pedido, detalles=detalles, t=t, current_lang=lang)
+    except Exception as e:
+        return f"Error: {e}"
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+@app.route('/admin/pedidos/cambiar-estado/<int:pedido_id>', methods=['POST'])
+@login_required
+def admin_pedido_cambiar_estado(pedido_id):
+    if current_user.tipo_usuario != 'admin':
+        flash('No tienes permisos', 'error')
+        return redirect(url_for('home'))
+    
+    nuevo_estado = request.form.get('estado')
+    estados_validos = ['pendiente', 'preparando', 'enviado', 'entregado', 'cancelado']
+    
+    if nuevo_estado not in estados_validos:
+        flash('Estado no válido', 'error')
+        return redirect(url_for('admin_pedidos'))
+    
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE pedidos SET estado = %s WHERE pedido_id = %s", (nuevo_estado, pedido_id))
+        conn.commit()
+        flash(f'Estado del pedido #{pedido_id} actualizado a {nuevo_estado}', 'success')
+    except Exception as e:
+        flash(f'Error: {e}', 'error')
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+    
+    # Redirigir a la página anterior
+    return redirect(request.referrer or url_for('admin_pedidos'))
 
 # ======================================================
 # RUTA PRUEBA

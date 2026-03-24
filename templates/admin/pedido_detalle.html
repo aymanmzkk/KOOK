@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Pedido #{{ pedido.pedido_id }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #D84731;">Pedido #{{ pedido.pedido_id }}</h1>
+        <a href="/admin/pedidos" class="btn btn-outline">← Volver</a>
+    </div>
+    
+    <div style="background: white; border-radius: 10px; padding: 25px;">
+        <h2 style="color: #484A47;">Información del pedido</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+            <div><strong>Cliente:</strong> {{ pedido.nombre }} {{ pedido.apellidos }}</div>
+            <div><strong>Email:</strong> {{ pedido.correo_electronico }}</div>
+            <div><strong>Fecha:</strong> {{ pedido.fecha_pedido.strftime('%d/%m/%Y %H:%M') if pedido.fecha_pedido else '—' }}</div>
+            <div><strong>Estado:</strong> 
+                <form action="/admin/pedidos/cambiar-estado/{{ pedido.pedido_id }}" method="POST" style="display: inline;">
+                    <select name="estado" onchange="this.form.submit()">
+                        <option value="pendiente" {% if pedido.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                        <option value="preparando" {% if pedido.estado == 'preparando' %}selected{% endif %}>Preparando</option>
+                        <option value="enviado" {% if pedido.estado == 'enviado' %}selected{% endif %}>Enviado</option>
+                        <option value="entregado" {% if pedido.estado == 'entregado' %}selected{% endif %}>Entregado</option>
+                        <option value="cancelado" {% if pedido.estado == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                    </select>
+                </form>
+            </div>
+            <div><strong>Total:</strong> <span style="color: #D84731; font-weight: bold;">{{ pedido.total }}€</span></div>
+            <div><strong>Dirección:</strong> {{ pedido.direccion_envio or 'No especificada' }}</div>
+        </div>
+        
+        <h2 style="color: #484A47; margin-top: 30px;">Productos</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+            <thead>
+                <tr style="background-color: #F2F7F2;">
+                    <th style="padding: 10px; text-align: left;">Receta</th>
+                    <th style="padding: 10px; text-align: left;">Cantidad</th>
+                    <th style="padding: 10px; text-align: left;">Precio unitario</th>
+                    <th style="padding: 10px; text-align: left;">Subtotal</th>
+                 </tr>
+            </thead>
+            <tbody>
+                {% for item in detalles %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">{{ item.nombre }}</td>
+                    <td style="padding: 10px;">{{ item.cantidad }}</td>
+                    <td style="padding: 10px;">{{ item.precio_unitario }}€</td>
+                    <td style="padding: 10px;">{{ "%.2f"|format(item.cantidad * item.precio_unitario) }}€</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr style="background-color: #F2F7F2;">
+                    <td colspan="3" style="padding: 10px; text-align: right;"><strong>Total:</strong></td>
+                    <td style="padding: 10px;"><strong>{{ pedido.total }}€</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock %}

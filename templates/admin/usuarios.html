@@ -4,9 +4,14 @@
 
 {% block content %}
 <div class="container">
-    <h1 style="color: #D84731; margin-bottom: 30px;">Gestionar Usuarios</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #D84731;">{{ t.admin_usuarios }}</h1>
+        <a href="/admin/usuarios/nuevo" class="btn btn-primary" style="text-decoration: none;">
+            <i class="fas fa-user-plus"></i> Nuevo Usuario
+        </a>
+    </div>
     
-    <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+    <div style="background: white; border-radius: 10px; padding: 20px; overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #F2F7F2;">
@@ -17,7 +22,7 @@
                     <th style="padding: 12px; text-align: left;">País</th>
                     <th style="padding: 12px; text-align: left;">Tipo</th>
                     <th style="padding: 12px; text-align: left;">Acciones</th>
-                </tr>
+                  </tr>
             </thead>
             <tbody>
                 {% for usuario in usuarios %}
@@ -33,11 +38,19 @@
                         </span>
                     </td>
                     <td style="padding: 12px;">
-                        <a href="/admin/usuarios/cambiar-tipo/{{ usuario.usuario_id }}" style="color: #2EC4B6; margin-right: 10px; text-decoration: none;">
-                            <i class="fas fa-user-tag"></i>
+                        <a href="/admin/usuarios/editar/{{ usuario.usuario_id }}" 
+                           style="color: #2EC4B6; margin-right: 10px; text-decoration: none;">
+                            <i class="fas fa-edit"></i> Editar
                         </a>
-                        <a href="/admin/usuarios/eliminar/{{ usuario.usuario_id }}" style="color: #D84731; text-decoration: none;" onclick="return confirm('¿Seguro que quieres eliminar este usuario?')">
-                            <i class="fas fa-trash"></i>
+                        <a href="/admin/usuarios/cambiar-tipo/{{ usuario.usuario_id }}" 
+                           style="color: #FFC107; margin-right: 10px; text-decoration: none;"
+                           onclick="return confirm('¿Cambiar tipo de usuario?')">
+                            <i class="fas fa-user-tag"></i> Tipo
+                        </a>
+                        <a href="/admin/usuarios/eliminar/{{ usuario.usuario_id }}" 
+                           style="color: #D84731; text-decoration: none;"
+                           onclick="return confirm('¿Seguro que quieres eliminar este usuario?')">
+                            <i class="fas fa-trash"></i> Eliminar
                         </a>
                     </td>
                 </tr>
