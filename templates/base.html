@@ -6,51 +6,284 @@
     <title>{% block title %}KOOK - Cocina Precisión{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #F2F7F2; color: #484A47; }
-        .container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
-        
-        header { background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
-        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; flex-wrap: wrap; }
-        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .logo-icon { color: #D84731; font-size: 28px; }
-        .logo-text { font-size: 28px; font-weight: 900; color: #D84731; }
-        
-        nav ul { display: flex; list-style: none; gap: 25px; flex-wrap: wrap; }
-        nav a { text-decoration: none; color: #484A47; font-weight: 500; transition: color 0.3s; }
-        nav a:hover { color: #D84731; }
-        
-        .nav-buttons { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        
-        .btn { padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block; }
-        .btn-outline { border: 2px solid #D84731; color: #D84731; background: transparent; }
-        .btn-outline:hover { background-color: #D84731; color: #F2F7F2; }
-        .btn-primary { background-color: #D84731; color: #F2F7F2; border: 2px solid #D84731; }
-        .btn-primary:hover { background-color: #b53a27; }
-        
-        .language-selector { display: flex; gap: 5px; align-items: center; }
-        .language-selector a { text-decoration: none; color: #666; padding: 5px; }
-        .language-selector a.active { color: #D84731; font-weight: 600; }
-        
-        .flash-messages { margin-top: 20px; }
-        .flash-success { background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; }
-        .flash-error { background-color: #D84731; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; }
-        
-        main { min-height: 500px; padding: 40px 0; }
-        
-        footer { background-color: #484A47; color: #F2F7F2; padding: 60px 0 20px; margin-top: 60px; }
-        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px; }
-        .footer-column h3 { color: #D84731; margin-bottom: 20px; }
-        .footer-column ul { list-style: none; }
-        .footer-column ul li { margin-bottom: 10px; }
-        .footer-column ul li a { color: #b5b6b5; text-decoration: none; }
-        .footer-column ul li a:hover { color: #D84731; }
-        .copyright { text-align: center; padding-top: 20px; border-top: 1px solid rgba(242,247,242,0.1); color: #b5b6b5; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #F2F7F2;
+            color: #484A47;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* HEADER */
+        header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            color: #D84731;
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 900;
+            color: #D84731;
+        }
+
+        /* NAVEGACIÓN */
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #484A47;
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #D84731;
+        }
+
+        /* BOTONES */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-outline {
+            border: 2px solid #D84731;
+            color: #D84731;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: #D84731;
+            color: #F2F7F2;
+        }
+
+        .btn-primary {
+            background-color: #D84731;
+            color: #F2F7F2;
+            border: 2px solid #D84731;
+        }
+
+        .btn-primary:hover {
+            background-color: #b53a27;
+            border-color: #b53a27;
+        }
+
+        /* SELECTOR DE IDIOMA */
+        .language-selector {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .language-selector a {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+
+        .language-selector a.active {
+            color: #D84731;
+            font-weight: 600;
+        }
+
+        .language-selector a:hover {
+            color: #D84731;
+        }
+
+        .user-greeting {
+            color: #484A47;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+        .user-greeting i {
+            color: #D84731;
+            margin-right: 5px;
+        }
+
+        /* FLASH MESSAGES */
+        .flash-messages {
+            margin-top: 20px;
+        }
+
+        .flash-success {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            animation: fadeOut 5s forwards;
+        }
+
+        .flash-error {
+            background-color: #D84731;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            animation: fadeOut 5s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+
+        /* MAIN CONTENT */
+        main {
+            min-height: 500px;
+            padding: 40px 0;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #484A47;
+            color: #F2F7F2;
+            padding: 60px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            color: #D84731;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #b5b6b5;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #D84731;
+        }
+
+        .footer-column p {
+            color: #b5b6b5;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(242, 247, 242, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #F2F7F2;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: #D84731;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(242, 247, 242, 0.1);
+            color: #b5b6b5;
+            font-size: 14px;
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .header-container { flex-direction: column; gap: 15px; }
-            nav ul { justify-content: center; }
-            .nav-buttons { justify-content: center; }
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                justify-content: center;
+            }
+
+            .nav-buttons {
+                justify-content: center;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -62,32 +295,46 @@
                 <i class="fas fa-utensils logo-icon"></i>
                 <div class="logo-text">KOOK</div>
             </a>
-            
+
             <nav>
                 <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/recetas">Recetas</a></li>
-                    <li><a href="/como-funciona">Cómo funciona</a></li>
-                    <li><a href="/contacto">Contacto</a></li>
+                    <li><a href="/">{{ t.inicio }}</a></li>
+                    <li><a href="/recetas">{{ t.recetas }}</a></li>
+                    <li><a href="/como-funciona">{{ t.como_funciona }}</a></li>
+                    <li><a href="/contacto">{{ t.contacto }}</a></li>
                 </ul>
             </nav>
-            
+
             <div class="nav-buttons">
                 <div class="language-selector">
-                    <a href="#" class="active">ES</a><span>|</span><a href="#">EN</a>
+                    <a href="/change-language/es" {% if current_lang == 'es' %}class="active"{% endif %}>ES</a>
+                    <span>|</span>
+                    <a href="/change-language/en" {% if current_lang == 'en' %}class="active"{% endif %}>EN</a>
                 </div>
-                
+
                 {% if current_user.is_authenticated %}
-                    <span style="color: #484A47;"><i class="fas fa-user" style="color: #D84731;"></i> {{ current_user.nombre }}</span>
+                    
                     {% if current_user.tipo_usuario == 'admin' %}
-                        <a href="/admin" class="btn btn-outline">Admin</a>
+                        <a href="/admin" class="btn btn-outline">
+                            <i class="fas fa-cog"></i> {{ t.admin }}
+                        </a>
                     {% endif %}
-                    <a href="/perfil" class="btn btn-outline">Perfil</a>
-                    <a href="/carrito" class="btn btn-outline">Carrito</a>
-                    <a href="/logout" class="btn btn-primary">Salir</a>
+                    <a href="/perfil" class="btn btn-outline">
+                        <i class="fas fa-user"></i> {{ t.perfil }}
+                    </a>
+                    <a href="/carrito" class="btn btn-outline">
+                        <i class="fas fa-shopping-cart"></i> {{ t.carrito }}
+                    </a>
+                    <a href="/logout" class="btn btn-primary">
+                        <i class="fas fa-sign-out-alt"></i> {{ t.logout }}
+                    </a>
                 {% else %}
-                    <a href="/login" class="btn btn-outline">Iniciar Sesión</a>
-                    <a href="/registro" class="btn btn-primary">Regístrate</a>
+                    <a href="/login" class="btn btn-outline">
+                        <i class="fas fa-sign-in-alt"></i> {{ t.login }}
+                    </a>
+                    <a href="/registro" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> {{ t.registro }}
+                    </a>
                 {% endif %}
             </div>
         </div>
@@ -112,38 +359,52 @@
             <div class="footer-content">
                 <div class="footer-column">
                     <h3>KOOK</h3>
-                    <p>Cocina sin errores con ingredientes pre-medidos.</p>
+                    <p>{{ t.footer_descripcion }}</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
                 </div>
+
                 <div class="footer-column">
-                    <h3>Enlaces</h3>
+                    <h3>{{ t.footer_enlaces }}</h3>
                     <ul>
-                        <li><a href="/">Inicio</a></li>
-                        <li><a href="/recetas">Recetas</a></li>
-                        <li><a href="/como-funciona">Cómo funciona</a></li>
+                        <li><a href="/">{{ t.inicio }}</a></li>
+                        <li><a href="/recetas">{{ t.recetas }}</a></li>
+                        <li><a href="/como-funciona">{{ t.como_funciona }}</a></li>
+                        <li><a href="/contacto">{{ t.contacto }}</a></li>
                     </ul>
                 </div>
+
                 <div class="footer-column">
-                    <h3>Contacto</h3>
+                    <h3>{{ t.footer_contacto }}</h3>
                     <ul>
-                        <li><i class="fas fa-envelope"></i> kook@info.com</li>
-                        <li><i class="fas fa-phone"></i> +34 910 123 456</li>
+                        <li><i class="fas fa-envelope" style="margin-right: 8px;"></i> kook@info.com</li>
+                        <li><i class="fas fa-phone" style="margin-right: 8px;"></i> +34 910 123 456</li>
+                        <li><i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i> Madrid, España</li>
                     </ul>
                 </div>
             </div>
+
             <div class="copyright">
-                <p>&copy; 2026 KOOK. Proyecto DAM.</p>
+                <p>&copy; 2026 KOOK. {{ t.footer_derechos }} {{ t.footer_proyecto }}</p>
             </div>
         </div>
     </footer>
 
     <script>
+        // Cerrar flash messages automáticamente
         setTimeout(function() {
             document.querySelectorAll('.flash-success, .flash-error').forEach(function(msg) {
                 msg.style.opacity = '0';
-                setTimeout(() => msg.style.display = 'none', 500);
+                setTimeout(function() {
+                    msg.style.display = 'none';
+                }, 500);
             });
         }, 5000);
     </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>
