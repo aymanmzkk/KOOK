@@ -104,8 +104,6 @@
 </div>
 
 <button type="button" id="add-ingrediente" class="btn btn-outline" style="margin-top: 10px;">+ Añadir ingrediente</button>
-
-            <button type="button" id="add-ingrediente" class="btn btn-outline" style="margin-top: 10px;">+ Añadir ingrediente</button>
             
             <!-- Pasos -->
             <h2 style="color: #484A47; margin: 30px 0 20px;">Pasos de preparación</h2>
@@ -143,6 +141,11 @@
 </div>
 
 <script>
+    // Bind remove handlers on existing ingredient rows (loaded from DB)
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+        btn.addEventListener('click', function() { this.closest('.ingrediente-row').remove(); });
+    });
+
     // Añadir ingrediente
 document.getElementById('add-ingrediente').addEventListener('click', function() {
     const container = document.getElementById('ingredientes-container');

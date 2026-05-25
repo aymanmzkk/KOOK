@@ -1,22 +1,68 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KOOK - Cocina Precisión{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Apply saved theme before paint to avoid flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('kook-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
     <style>
+        /* ── THEME VARIABLES ─────────────────────────────── */
+        :root {
+            --bg:           #F2F7F2;
+            --surface:      #ffffff;
+            --surface-2:    #f7faf7;
+            --text:         #2d2f2c;
+            --text-muted:   #6b6d6a;
+            --border:       #e4e4e4;
+            --header-bg:    #ffffff;
+            --header-shadow:0 1px 0 #e8e8e8, 0 2px 12px rgba(0,0,0,0.06);
+            --footer-bg:    #3d3f3c;
+            --input-bg:     #fafafa;
+            --table-stripe: #F2F7F2;
+            --shadow-sm:    0 2px 10px rgba(0,0,0,0.07);
+            --shadow-md:    0 10px 28px rgba(0,0,0,0.13);
+            --transition:   background-color 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
+        }
+
+        [data-theme="dark"] {
+            --bg:           #1a1c1a;
+            --surface:      #252825;
+            --surface-2:    #2e312e;
+            --text:         #f0f2ef;
+            --text-muted:   #b8bab6;
+            --border:       #3a3d3a;
+            --header-bg:    #1e211e;
+            --header-shadow:0 1px 0 #2e312e, 0 2px 12px rgba(0,0,0,0.3);
+            --footer-bg:    #131413;
+            --input-bg:     #2a2d2a;
+            --table-stripe: #2a2d2a;
+            --shadow-sm:    0 2px 10px rgba(0,0,0,0.25);
+            --shadow-md:    0 10px 28px rgba(0,0,0,0.4);
+        }
+
+        /* ── RESET ───────────────────────────────────────── */
+        html { scroll-behavior: smooth; }
+
         * {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: var(--transition);
         }
 
         body {
-            background-color: #F2F7F2;
-            color: #484A47;
-            line-height: 1.6;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
         }
 
         .container {
@@ -26,10 +72,10 @@
             padding: 0 15px;
         }
 
-        /* HEADER */
+        /* ── HEADER ──────────────────────────────────────── */
         header {
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            background-color: var(--header-bg);
+            box-shadow: var(--header-shadow);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -39,67 +85,74 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
+            padding: 14px 0;
             flex-wrap: wrap;
             gap: 15px;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
+        /* ── LOGO ────────────────────────────────────────── */
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+
+        .logo-mark {
+            width: 38px; height: 38px;
+            background: #D84731;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: none;
         }
 
-        .logo-icon {
-            color: #D84731;
-            font-size: 28px;
-        }
+        .logo-mark i { color: white; font-size: 17px; transition: none; }
 
         .logo-text {
-            font-size: 28px;
-            font-weight: 900;
-            color: #D84731;
+            font-size: 24px; font-weight: 900;
+            color: var(--text);
+            letter-spacing: -0.5px;
+            transition: color 0.25s;
         }
 
-        /* NAVEGACIÓN */
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
+        .logo-text span { color: #D84731; }
+
+        /* ── NAV ─────────────────────────────────────────── */
+        nav ul { display: flex; list-style: none; gap: 28px; flex-wrap: wrap; }
 
         nav a {
             text-decoration: none;
-            color: #484A47;
+            color: var(--text-muted);
             font-weight: 500;
-            font-size: 16px;
-            transition: color 0.3s;
+            font-size: 15px;
+            padding-bottom: 3px;
+            position: relative;
+            transition: color 0.2s;
         }
 
-        nav a:hover {
-            color: #D84731;
+        nav a::after {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: #D84731; border-radius: 2px;
+            transition: width 0.25s;
         }
 
-        /* BOTONES */
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        nav a:hover { color: #D84731; }
+        nav a:hover::after { width: 100%; }
+        nav a.nav-active { color: #D84731; }
+        nav a.nav-active::after { width: 100%; }
+
+        /* ── BUTTONS ─────────────────────────────────────── */
+        .nav-buttons { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         .btn {
-            padding: 10px 20px;
+            padding: 9px 20px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 15px;
-            transition: all 0.3s;
+            font-size: 14px;
+            transition: all 0.2s;
             display: inline-block;
             cursor: pointer;
             border: none;
+            letter-spacing: 0.2px;
         }
 
         .btn-outline {
@@ -110,180 +163,230 @@
 
         .btn-outline:hover {
             background-color: #D84731;
-            color: #F2F7F2;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(216,71,49,0.25);
         }
 
         .btn-primary {
             background-color: #D84731;
-            color: #F2F7F2;
+            color: #fff;
             border: 2px solid #D84731;
         }
 
         .btn-primary:hover {
-            background-color: #b53a27;
-            border-color: #b53a27;
+            background-color: #c03e2a;
+            border-color: #c03e2a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(216,71,49,0.3);
         }
 
-        /* SELECTOR DE IDIOMA */
-        .language-selector {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            margin-right: 10px;
+        .btn-sm { padding: 7px 14px; font-size: 13px; }
+
+        /* ── DARK MODE TOGGLE (floating) ────────────────── */
+        .theme-toggle {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9999;
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: #D84731;
+            color: #fff;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px;
+            box-shadow: 0 4px 16px rgba(216,71,49,0.4);
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
         }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px) scale(1.07);
+            box-shadow: 0 6px 20px rgba(216,71,49,0.5);
+        }
+
+        .theme-toggle:active { transform: scale(0.95); }
+
+        /* ── LANGUAGE SELECTOR ───────────────────────────── */
+        .language-selector { display: flex; gap: 4px; align-items: center; margin-right: 2px; }
 
         .language-selector a {
             text-decoration: none;
-            color: #666;
-            font-size: 14px;
-            padding: 5px;
-            transition: color 0.3s;
+            color: var(--text-muted);
+            font-size: 13px; font-weight: 600;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
         }
 
-        .language-selector a.active {
-            color: #D84731;
-            font-weight: 600;
-        }
+        .language-selector a.active { color: #D84731; background: #fef0ee; }
+        [data-theme="dark"] .language-selector a.active { background: #3d1a14; }
+        .language-selector a:hover { color: #D84731; }
+        .language-selector span { color: var(--border); font-size: 12px; }
 
-        .language-selector a:hover {
-            color: #D84731;
-        }
+        /* ── FLASH MESSAGES ──────────────────────────────── */
+        .flash-messages { margin-top: 16px; }
 
-        .user-greeting {
-            color: #484A47;
-            font-weight: 500;
-            margin-right: 5px;
-        }
-
-        .user-greeting i {
-            color: #D84731;
-            margin-right: 5px;
-        }
-
-        /* FLASH MESSAGES */
-        .flash-messages {
-            margin-top: 20px;
+        .flash-success, .flash-error {
+            display: flex; align-items: center; gap: 12px;
+            padding: 13px 18px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 500; font-size: 14px;
+            animation: slideIn 0.3s ease;
         }
 
         .flash-success {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            animation: fadeOut 5s forwards;
+            background: #f0faf0; border-left: 4px solid #4CAF50; color: #2e7d32;
         }
 
         .flash-error {
-            background-color: #D84731;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            animation: fadeOut 5s forwards;
+            background: #fff3f1; border-left: 4px solid #D84731; color: #b33a24;
         }
 
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            70% { opacity: 1; }
-            100% { opacity: 0; display: none; }
+        [data-theme="dark"] .flash-success { background: #1a2e1a; color: #81c784; }
+        [data-theme="dark"] .flash-error   { background: #2e1a18; color: #ef9a9a; }
+
+        .flash-success::before { content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #4CAF50; }
+        .flash-error::before   { content: '\f057'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #D84731; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* MAIN CONTENT */
-        main {
-            min-height: 500px;
-            padding: 40px 0;
-        }
+        /* ── MAIN ────────────────────────────────────────── */
+        main { min-height: 500px; padding: 40px 0; }
 
-        /* FOOTER */
+        /* ── FOOTER ──────────────────────────────────────── */
         footer {
-            background-color: #484A47;
-            color: #F2F7F2;
-            padding: 60px 0 20px;
-            margin-top: 60px;
+            background-color: var(--footer-bg);
+            color: #c0c2bf;
+            padding: 55px 0 20px;
+            margin-top: 70px;
         }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-column h3 { color: #D84731; margin-bottom: 18px; font-size: 17px; letter-spacing: 0.3px; }
+        .footer-column ul { list-style: none; }
+        .footer-column ul li { margin-bottom: 9px; }
+        .footer-column ul li a { color: #a0a1a0; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        .footer-column ul li a:hover { color: #D84731; }
+        .footer-column p { color: #a0a1a0; line-height: 1.65; font-size: 14px; }
 
-        .footer-column h3 {
-            color: #D84731;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        .footer-column ul {
-            list-style: none;
-        }
-
-        .footer-column ul li {
-            margin-bottom: 10px;
-        }
-
-        .footer-column ul li a {
-            color: #b5b6b5;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-column ul li a:hover {
-            color: #D84731;
-        }
-
-        .footer-column p {
-            color: #b5b6b5;
-            line-height: 1.6;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
+        .social-links { display: flex; gap: 10px; margin-top: 18px; }
 
         .social-links a {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(242, 247, 242, 0.1);
+            width: 36px; height: 36px;
+            background-color: rgba(255,255,255,0.08);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #F2F7F2;
-            text-decoration: none;
-            transition: background-color 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            color: #c0c1c0; text-decoration: none; font-size: 14px;
+            transition: all 0.2s;
         }
 
-        .social-links a:hover {
-            background-color: #D84731;
-        }
+        .social-links a:hover { background-color: #D84731; color: #fff; transform: translateY(-2px); }
 
         .copyright {
             text-align: center;
             padding-top: 20px;
-            border-top: 1px solid rgba(242, 247, 242, 0.1);
-            color: #b5b6b5;
-            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: #888; font-size: 13px;
         }
 
-        /* RESPONSIVE */
+        /* ── DARK MODE — GLOBAL SURFACE OVERRIDES ────────── */
+        /* Cards and white boxes defined with classes */
+        [data-theme="dark"] .recipe-card,
+        [data-theme="dark"] .auth-card,
+        [data-theme="dark"] .feature-card,
+        [data-theme="dark"] .stat-card,
+        [data-theme="dark"] .step-card,
+        [data-theme="dark"] .feature-row,
+        [data-theme="dark"] .action-btn {
+            background: var(--surface) !important;
+            color: var(--text) !important;
+            border-color: var(--border) !important;
+        }
+
+        /* Force readable text inside all cards */
+        [data-theme="dark"] .recipe-card h1,
+        [data-theme="dark"] .recipe-card h2,
+        [data-theme="dark"] .recipe-card h3,
+        [data-theme="dark"] .feature-card h3,
+        [data-theme="dark"] .stat-card h3,
+        [data-theme="dark"] .step-card h3,
+        [data-theme="dark"] .auth-card h1,
+        [data-theme="dark"] div[style*="background: white"] h1,
+        [data-theme="dark"] div[style*="background: white"] h2,
+        [data-theme="dark"] div[style*="background: white"] h3,
+        [data-theme="dark"] div[style*="background: white"] p,
+        [data-theme="dark"] div[style*="background: white"] td,
+        [data-theme="dark"] div[style*="background: white"] th,
+        [data-theme="dark"] div[style*="background: white"] label,
+        [data-theme="dark"] div[style*="background: white"] strong {
+            color: var(--text) !important;
+        }
+
+        /* Headings with hardcoded dark color anywhere on page */
+        [data-theme="dark"] h1[style*="color: #484A47"],
+        [data-theme="dark"] h2[style*="color: #484A47"],
+        [data-theme="dark"] h3[style*="color: #484A47"],
+        [data-theme="dark"] p[style*="color: #484A47"],
+        [data-theme="dark"] h2[style*="color: #2d2f2c"],
+        [data-theme="dark"] h3[style*="color: #2d2f2c"] {
+            color: var(--text) !important;
+        }
+
+        /* Inline style white backgrounds */
+        [data-theme="dark"] div[style*="background: white"],
+        [data-theme="dark"] div[style*="background-color: white"],
+        [data-theme="dark"] div[style*="background-color: #ffffff"],
+        [data-theme="dark"] div[style*="background:#ffffff"] {
+            background: var(--surface) !important;
+            color: var(--text) !important;
+        }
+
+        /* Table stripe rows */
+        [data-theme="dark"] tr[style*="background: #F2F7F2"],
+        [data-theme="dark"] tr[style*="background-color: #F2F7F2"],
+        [data-theme="dark"] thead tr {
+            background: var(--surface-2) !important;
+        }
+
+        [data-theme="dark"] tr[style*="border-bottom: 1px solid #eee"] {
+            border-bottom-color: var(--border) !important;
+        }
+
+        /* Inputs */
+        [data-theme="dark"] input,
+        [data-theme="dark"] textarea,
+        [data-theme="dark"] select {
+            background: var(--input-bg) !important;
+            color: var(--text) !important;
+            border-color: var(--border) !important;
+        }
+
+        /* Muted text */
+        [data-theme="dark"] p[style*="color: #666"],
+        [data-theme="dark"] p[style*="color: #777"],
+        [data-theme="dark"] span[style*="color: #777"],
+        [data-theme="dark"] span[style*="color: #666"] {
+            color: var(--text-muted) !important;
+        }
+
+        /* Light section backgrounds */
+        [data-theme="dark"] section[style*="background-color: #F2F7F2"],
+        [data-theme="dark"] div[style*="background: #F2F7F2"],
+        [data-theme="dark"] div[style*="background-color: #F2F7F2"] {
+            background: var(--surface-2) !important;
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────── */
         @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            nav ul {
-                justify-content: center;
-            }
-
-            .nav-buttons {
-                justify-content: center;
-            }
+            .header-container { flex-direction: column; text-align: center; }
+            nav ul { justify-content: center; }
+            .nav-buttons { justify-content: center; }
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -292,16 +395,18 @@
     <header>
         <div class="container header-container">
             <a href="/" class="logo">
-                <i class="fas fa-utensils logo-icon"></i>
-                <div class="logo-text">KOOK</div>
+                <div class="logo-mark">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="logo-text">K<span>OO</span>K</div>
             </a>
 
             <nav>
                 <ul>
-                    <li><a href="/">{{ t.inicio }}</a></li>
-                    <li><a href="/recetas">{{ t.recetas }}</a></li>
-                    <li><a href="/como-funciona">{{ t.como_funciona }}</a></li>
-                    <li><a href="/contacto">{{ t.contacto }}</a></li>
+                    <li><a href="/" class="{% if request.endpoint == 'home' %}nav-active{% endif %}">{{ t.inicio }}</a></li>
+                    <li><a href="/recetas" class="{% if request.endpoint == 'recetas' %}nav-active{% endif %}">{{ t.recetas }}</a></li>
+                    <li><a href="/como-funciona" class="{% if request.endpoint == 'como_funciona' %}nav-active{% endif %}">{{ t.como_funciona }}</a></li>
+                    <li><a href="/contacto" class="{% if request.endpoint == 'contacto' %}nav-active{% endif %}">{{ t.contacto }}</a></li>
                 </ul>
             </nav>
 
@@ -313,26 +418,29 @@
                 </div>
 
                 {% if current_user.is_authenticated %}
-                    
                     {% if current_user.tipo_usuario == 'admin' %}
-                        <a href="/admin" class="btn btn-outline">
+                        <a href="/admin" class="btn btn-outline btn-sm">
                             <i class="fas fa-cog"></i> {{ t.admin }}
                         </a>
                     {% endif %}
-                    <a href="/perfil" class="btn btn-outline">
+                    <a href="/perfil" class="btn btn-outline btn-sm">
                         <i class="fas fa-user"></i> {{ t.perfil }}
                     </a>
-                    <a href="/carrito" class="btn btn-outline">
+                    <a href="/carrito" class="btn btn-outline btn-sm" style="position: relative;">
                         <i class="fas fa-shopping-cart"></i> {{ t.carrito }}
+                        {% set cart_count = session.get('carrito', [])|length %}
+                        {% if cart_count > 0 %}
+                        <span style="position: absolute; top: -7px; right: -7px; background: #D84731; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid white; transition: none;">{{ cart_count }}</span>
+                        {% endif %}
                     </a>
-                    <a href="/logout" class="btn btn-primary">
+                    <a href="/logout" class="btn btn-primary btn-sm">
                         <i class="fas fa-sign-out-alt"></i> {{ t.logout }}
                     </a>
                 {% else %}
-                    <a href="/login" class="btn btn-outline">
+                    <a href="/login" class="btn btn-outline btn-sm">
                         <i class="fas fa-sign-in-alt"></i> {{ t.login }}
                     </a>
-                    <a href="/registro" class="btn btn-primary">
+                    <a href="/registro" class="btn btn-primary btn-sm">
                         <i class="fas fa-user-plus"></i> {{ t.registro }}
                     </a>
                 {% endif %}
@@ -380,9 +488,9 @@
                 <div class="footer-column">
                     <h3>{{ t.footer_contacto }}</h3>
                     <ul>
-                        <li><i class="fas fa-envelope" style="margin-right: 8px;"></i> kook@info.com</li>
-                        <li><i class="fas fa-phone" style="margin-right: 8px;"></i> +34 910 123 456</li>
-                        <li><i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i> Madrid, España</li>
+                        <li><i class="fas fa-envelope" style="margin-right: 8px; color: #D84731;"></i> kook@info.com</li>
+                        <li><i class="fas fa-phone" style="margin-right: 8px; color: #D84731;"></i> +34 910 123 456</li>
+                        <li><i class="fas fa-map-marker-alt" style="margin-right: 8px; color: #D84731;"></i> Madrid, España</li>
                     </ul>
                 </div>
             </div>
@@ -393,16 +501,37 @@
         </div>
     </footer>
 
+    <!-- Floating dark mode toggle -->
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Cambiar tema">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
     <script>
-        // Cerrar flash messages automáticamente
+        // ── Flash auto-dismiss ────────────────────────────
         setTimeout(function() {
             document.querySelectorAll('.flash-success, .flash-error').forEach(function(msg) {
                 msg.style.opacity = '0';
-                setTimeout(function() {
-                    msg.style.display = 'none';
-                }, 500);
+                setTimeout(function() { msg.style.display = 'none'; }, 500);
             });
-        }, 5000);
+        }, 4500);
+
+        // ── Dark mode toggle ──────────────────────────────
+        var html = document.documentElement;
+        var icon = document.getElementById('theme-icon');
+
+        function applyTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('kook-theme', theme);
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Set correct icon on load
+        applyTheme(localStorage.getItem('kook-theme') || 'light');
+
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            var current = html.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        });
     </script>
 
     {% block extra_js %}{% endblock %}

@@ -2,37 +2,103 @@
 
 {% block title %}{{ t.admin_dashboard }} - KOOK{% endblock %}
 
+{% block extra_css %}
+<style>
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-bottom: 4px solid #D84731;
+        transition: transform 0.25s;
+    }
+    .stat-card:hover { transform: translateY(-4px); }
+    .stat-icon {
+        width: 60px; height: 60px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 15px;
+    }
+    .stat-value { font-size: 42px; font-weight: 900; line-height: 1; }
+    .stat-label { color: #666; font-size: 14px; margin-top: 6px; }
+    .action-btn {
+        display: flex; align-items: center; gap: 12px;
+        background: white; border-radius: 10px;
+        padding: 18px 22px;
+        text-decoration: none; color: #484A47; font-weight: 600;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+        transition: all 0.25s;
+        border-left: 4px solid transparent;
+    }
+    .action-btn:hover { border-left-color: #D84731; color: #D84731; transform: translateX(4px); }
+    .action-btn i { font-size: 20px; color: #D84731; width: 28px; text-align: center; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
-    <h1 style="color: #D84731; margin-bottom: 30px;">{{ t.admin_dashboard }}</h1>
-    
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
-        <div style="background: white; padding: 20px; text-align: center;">
-            <h3>{{ t.admin_usuarios }}</h3>
-            <p style="font-size: 36px; color: #D84731;">{{ total_usuarios }}</p>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 35px; flex-wrap: wrap; gap: 15px;">
+        <h1 style="color: #D84731; font-size: 32px;">
+            <i class="fas fa-tachometer-alt" style="margin-right: 10px;"></i>{{ t.admin_dashboard }}
+        </h1>
+        <a href="/admin/recetas/nueva" class="btn btn-primary">
+            <i class="fas fa-plus"></i> {{ t.admin_nueva_receta }}
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 45px;">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #FEE8E5;">
+                <i class="fas fa-users" style="color: #D84731;"></i>
+            </div>
+            <div class="stat-value" style="color: #D84731;">{{ total_usuarios }}</div>
+            <div class="stat-label">{{ t.admin_usuarios }}</div>
         </div>
-        <div style="background: white; padding: 20px; text-align: center;">
-            <h3>{{ t.admin_recetas }}</h3>
-            <p style="font-size: 36px;">{{ total_recetas }}</p>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #E8F5E9;">
+                <i class="fas fa-utensils" style="color: #4CAF50;"></i>
+            </div>
+            <div class="stat-value" style="color: #4CAF50;">{{ total_recetas }}</div>
+            <div class="stat-label">{{ t.admin_recetas }}</div>
         </div>
-        <div style="background: white; padding: 20px; text-align: center;">
-            <h3>{{ t.admin_pedidos }}</h3>
-            <p style="font-size: 36px;">{{ total_pedidos }}</p>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #E3F2FD;">
+                <i class="fas fa-shopping-bag" style="color: #2196F3;"></i>
+            </div>
+            <div class="stat-value" style="color: #2196F3;">{{ total_pedidos }}</div>
+            <div class="stat-label">{{ t.admin_pedidos }}</div>
         </div>
-        <div style="background: white; padding: 20px; text-align: center;">
-            <h3>{{ t.admin_pendientes }}</h3>
-            <p style="font-size: 36px;">{{ pedidos_pendientes }}</p>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #FFF8E1;">
+                <i class="fas fa-clock" style="color: #FF9800;"></i>
+            </div>
+            <div class="stat-value" style="color: #FF9800;">{{ pedidos_pendientes }}</div>
+            <div class="stat-label">{{ t.admin_pendientes }}</div>
         </div>
     </div>
-    
-    <div style="margin-top: 40px;">
-        <h2>{{ t.admin_acciones_rapidas }}</h2>
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
-            <a href="/admin/recetas" class="btn btn-outline">{{ t.admin_gestionar_recetas }}</a>
-            <a href="/admin/usuarios" class="btn btn-outline">{{ t.admin_gestionar_usuarios }}</a>
-            <a href="/admin/pedidos" class="btn btn-outline">{{ t.admin_ver_pedidos }}</a>
-            <a href="/admin/recetas/nueva" class="btn btn-primary">{{ t.admin_nueva_receta }}</a>
-        </div>
+
+    <!-- Quick actions -->
+    <h2 style="font-size: 20px; color: #484A47; margin-bottom: 18px;">
+        <i class="fas fa-bolt" style="color: #D84731; margin-right: 8px;"></i>{{ t.admin_acciones_rapidas }}
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+        <a href="/admin/recetas" class="action-btn">
+            <i class="fas fa-book-open"></i> {{ t.admin_gestionar_recetas }}
+        </a>
+        <a href="/admin/usuarios" class="action-btn">
+            <i class="fas fa-user-cog"></i> {{ t.admin_gestionar_usuarios }}
+        </a>
+        <a href="/admin/pedidos" class="action-btn">
+            <i class="fas fa-list-alt"></i> {{ t.admin_ver_pedidos }}
+        </a>
+        <a href="/admin/recetas/nueva" class="action-btn">
+            <i class="fas fa-plus-circle"></i> {{ t.admin_nueva_receta }}
+        </a>
     </div>
+
 </div>
 {% endblock %}

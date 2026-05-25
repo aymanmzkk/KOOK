@@ -2,26 +2,140 @@
 
 {% block title %}{{ t.como_funciona }} - KOOK{% endblock %}
 
+{% block extra_css %}
+<style>
+    .step-card {
+        text-align: center;
+        padding: 40px 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        position: relative;
+        transition: transform 0.3s;
+    }
+    .step-card:hover { transform: translateY(-5px); }
+    .step-number {
+        width: 80px; height: 80px;
+        background: #D84731; color: white;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px; font-weight: 900;
+        margin: 0 auto 25px;
+    }
+    .step-card h3 { font-size: 20px; margin-bottom: 12px; color: #484A47; }
+    .step-card p  { color: #666; line-height: 1.6; }
+    .feature-row {
+        display: flex; align-items: center; gap: 40px;
+        background: white; border-radius: 15px; padding: 35px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+    .feature-icon {
+        width: 70px; height: 70px; flex-shrink: 0;
+        background: #FEE8E5; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 28px; color: #D84731;
+    }
+    @media (max-width: 768px) {
+        .steps-grid { grid-template-columns: 1fr !important; }
+        .feature-row { flex-direction: column; text-align: center; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
-    <h1 style="color: #D84731; text-align: center; margin-bottom: 50px;">{{ t.como_funciona }}</h1>
-    
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-        <div style="text-align: center; padding: 30px; background: white; border-radius: 15px;">
-            <div style="width: 80px; height: 80px; background: #D84731; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">1</div>
+
+    <!-- Hero -->
+    <div style="text-align: center; margin-bottom: 55px;">
+        <h1 style="color: #D84731; font-size: 40px; margin-bottom: 15px;">{{ t.como_funciona }}</h1>
+        <p style="color: #666; font-size: 18px; max-width: 600px; margin: 0 auto;">{{ t.home_subtitulo }}</p>
+    </div>
+
+    <!-- 3 pasos -->
+    <div class="steps-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 70px;">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <i class="fas fa-search" style="font-size: 32px; color: #D84731; margin-bottom: 15px;"></i>
             <h3>{{ t.home_ver_recetas }}</h3>
-            <p>Explora nuestras recetas y elige tu favorita.</p>
+            <p>
+                {% if current_lang == 'en' %}
+                    Browse our catalog of recipes and choose the one that inspires you most.
+                {% else %}
+                    Explora nuestro catálogo de recetas y elige la que más te apetezca.
+                {% endif %}
+            </p>
         </div>
-        <div style="text-align: center; padding: 30px; background: white; border-radius: 15px;">
-            <div style="width: 80px; height: 80px; background: #D84731; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">2</div>
-            <h3>Recibe tu KOOK Box</h3>
-            <p>Te enviamos todos los ingredientes pre-medidos.</p>
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <i class="fas fa-box-open" style="font-size: 32px; color: #D84731; margin-bottom: 15px;"></i>
+            <h3>
+                {% if current_lang == 'en' %}Receive your KOOK Box{% else %}Recibe tu KOOK Box{% endif %}
+            </h3>
+            <p>
+                {% if current_lang == 'en' %}
+                    We ship all the pre-measured ingredients straight to your door in 2 days.
+                {% else %}
+                    Te enviamos todos los ingredientes pre-medidos en 2 días.
+                {% endif %}
+            </p>
         </div>
-        <div style="text-align: center; padding: 30px; background: white; border-radius: 15px;">
-            <div style="width: 80px; height: 80px; background: #D84731; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">3</div>
-            <h3>Cocina y disfruta</h3>
-            <p>Sigue las instrucciones y sorpréndete con el resultado.</p>
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <i class="fas fa-utensils" style="font-size: 32px; color: #D84731; margin-bottom: 15px;"></i>
+            <h3>
+                {% if current_lang == 'en' %}Cook and enjoy{% else %}Cocina y disfruta{% endif %}
+            </h3>
+            <p>
+                {% if current_lang == 'en' %}
+                    Follow the step-by-step instructions and surprise yourself with the result.
+                {% else %}
+                    Sigue las instrucciones paso a paso y sorpréndete con el resultado.
+                {% endif %}
+            </p>
         </div>
     </div>
+
+    <!-- Por qué KOOK -->
+    <h2 style="font-size: 30px; color: #484A47; margin-bottom: 30px;">{{ t.home_por_que }}</h2>
+
+    <div>
+        <div class="feature-row">
+            <div class="feature-icon"><i class="fas fa-weight"></i></div>
+            <div>
+                <h3 style="color: #D84731; margin-bottom: 8px;">{{ t.home_ingredientes_titulo }}</h3>
+                <p style="color: #666;">{{ t.home_ingredientes_texto }}</p>
+            </div>
+        </div>
+        <div class="feature-row">
+            <div class="feature-icon"><i class="fas fa-recycle"></i></div>
+            <div>
+                <h3 style="color: #D84731; margin-bottom: 8px;">{{ t.home_desperdicio_titulo }}</h3>
+                <p style="color: #666;">{{ t.home_desperdicio_texto }}</p>
+            </div>
+        </div>
+        <div class="feature-row">
+            <div class="feature-icon"><i class="fas fa-clipboard-check"></i></div>
+            <div>
+                <h3 style="color: #D84731; margin-bottom: 8px;">{{ t.home_instrucciones_titulo }}</h3>
+                <p style="color: #666;">{{ t.home_instrucciones_texto }}</p>
+            </div>
+        </div>
+        <div class="feature-row">
+            <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+            <div>
+                <h3 style="color: #D84731; margin-bottom: 8px;">{{ t.home_entrega_titulo }}</h3>
+                <p style="color: #666;">{{ t.home_entrega_texto }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="background: #484A47; color: white; border-radius: 15px; padding: 50px; text-align: center; margin-top: 60px;">
+        <h2 style="font-size: 28px; margin-bottom: 15px;">{{ t.home_cta_titulo }}</h2>
+        <p style="font-size: 17px; margin-bottom: 30px; opacity: 0.85;">{{ t.home_cta_texto }}</p>
+        <a href="/recetas" class="btn btn-primary">{{ t.home_cta_boton }}</a>
+    </div>
+
 </div>
 {% endblock %}

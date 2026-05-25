@@ -2,22 +2,100 @@
 
 {% block title %}{{ t.login_titulo }} - KOOK{% endblock %}
 
+{% block extra_css %}
+<style>
+    .auth-card {
+        background: white;
+        padding: 44px 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+        max-width: 440px;
+        margin: 0 auto;
+    }
+
+    .auth-card h1 {
+        color: #D84731;
+        text-align: center;
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+        text-align: center;
+        color: #999;
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 7px;
+        letter-spacing: 0.2px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid #e2e2e2;
+        border-radius: 9px;
+        font-size: 15px;
+        color: #333;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+        background: #fafafa;
+    }
+
+    .form-group input:focus {
+        border-color: #D84731;
+        box-shadow: 0 0 0 3px rgba(216,71,49,0.1);
+        background: white;
+    }
+
+    .auth-card .btn-primary {
+        width: 100%;
+        padding: 13px;
+        font-size: 15px;
+        margin-top: 6px;
+        border-radius: 9px;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 22px;
+        font-size: 14px;
+        color: #777;
+    }
+
+    .auth-footer a { color: #D84731; font-weight: 600; text-decoration: none; }
+    .auth-footer a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width: 500px;">
-    <div style="background: white; padding: 40px; border-radius: 15px;">
-        <h1 style="color: #D84731; text-align: center;">{{ t.login_titulo }}</h1>
+<div class="container" style="padding-top: 20px;">
+    <div class="auth-card">
+        <h1>{{ t.login_titulo }}</h1>
+        <p class="auth-subtitle">
+            {% if current_lang == 'en' %}Welcome back to KOOK{% else %}Bienvenido de nuevo a KOOK{% endif %}
+        </p>
         <form method="POST">
-            <div style="margin-bottom: 15px;">
+            <div class="form-group">
                 <label>{{ t.login_email }}</label>
-                <input type="email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="email" name="email" required autocomplete="email" placeholder="tu@email.com">
             </div>
-            <div style="margin-bottom: 20px;">
+            <div class="form-group">
                 <label>{{ t.login_password }}</label>
-                <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••">
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">{{ t.login_entrar }}</button>
+            <button type="submit" class="btn btn-primary">{{ t.login_entrar }}</button>
         </form>
-        <p style="text-align: center; margin-top: 20px;">{{ t.login_no_cuenta }} <a href="/registro">{{ t.login_registrate }}</a></p>
+        <p class="auth-footer">{{ t.login_no_cuenta }} <a href="/registro">{{ t.login_registrate }}</a></p>
     </div>
 </div>
 {% endblock %}

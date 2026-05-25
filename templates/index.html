@@ -2,42 +2,156 @@
 
 {% block title %}{{ t.home_titulo }} - KOOK{% endblock %}
 
+{% block extra_css %}
+<style>
+    .hero {
+        background-color: #2d2f2c;
+        background: linear-gradient(rgba(30,30,28,0.78), rgba(30,30,28,0.78)),
+                    url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1600&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 120px 0;
+        text-align: center;
+        color: white;
+    }
+
+    .hero h1 {
+        font-size: 50px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        margin-bottom: 18px;
+        line-height: 1.1;
+    }
+
+    .hero p {
+        font-size: 19px;
+        max-width: 620px;
+        margin: 0 auto 34px;
+        opacity: 0.88;
+        line-height: 1.6;
+    }
+
+    .hero-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+    .hero .btn-outline {
+        border-color: rgba(255,255,255,0.7);
+        color: white;
+        background: transparent;
+    }
+
+    .hero .btn-outline:hover {
+        background: white;
+        color: #D84731;
+        border-color: white;
+    }
+
+    .features-section { padding: 70px 0; }
+
+    .section-header { text-align: center; margin-bottom: 50px; }
+    .section-header h2 { font-size: 34px; font-weight: 800; color: #2d2f2c; margin-bottom: 10px; }
+    .section-header p  { color: #888; font-size: 16px; }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 14px;
+        padding: 32px 26px;
+        text-align: center;
+        border-top: 4px solid #D84731;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.11);
+    }
+
+    .feature-card .icon-wrap {
+        width: 64px;
+        height: 64px;
+        background: #fef0ee;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+
+    .feature-card i { font-size: 26px; color: #D84731; }
+    .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: #2d2f2c; }
+    .feature-card p  { color: #777; font-size: 14px; line-height: 1.55; }
+
+    .cta-section {
+        background: linear-gradient(135deg, #484A47 0%, #2d2f2c 100%);
+        color: white;
+        padding: 80px 30px;
+        text-align: center;
+        border-radius: 18px;
+        margin: 20px 0 0;
+    }
+
+    .cta-section h2 { font-size: 34px; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.5px; }
+    .cta-section p  { font-size: 17px; max-width: 600px; margin: 0 auto 32px; opacity: 0.82; }
+
+    .cta-section .btn-primary {
+        background: white;
+        color: #484A47;
+        border-color: white;
+        font-size: 15px;
+        padding: 13px 32px;
+    }
+
+    .cta-section .btn-primary:hover {
+        background: #f0f0f0;
+        border-color: #f0f0f0;
+        color: #D84731;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section style="background: linear-gradient(rgba(72,74,71,0.85), rgba(72,74,71,0.85)), url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136'); background-size: cover; padding: 100px 0; text-align: center; color: white;">
+
+<section class="hero">
     <div class="container">
-        <h1 style="font-size: 48px; margin-bottom: 20px;">{{ t.home_titulo }}</h1>
-        <p style="font-size: 20px; max-width: 700px; margin: 0 auto 30px;">{{ t.home_subtitulo }}</p>
-        <div style="display: flex; justify-content: center; gap: 20px;">
+        <h1>{{ t.home_titulo }}</h1>
+        <p>{{ t.home_subtitulo }}</p>
+        <div class="hero-buttons">
             <a href="/recetas" class="btn btn-primary">{{ t.home_ver_recetas }}</a>
             <a href="/como-funciona" class="btn btn-outline">{{ t.home_como_funciona }}</a>
         </div>
     </div>
 </section>
 
-<section style="padding: 60px 0;">
+<section class="features-section">
     <div class="container">
-        <div style="text-align: center; margin-bottom: 50px;">
-            <h2 style="font-size: 36px;">{{ t.home_por_que }}</h2>
-            <p style="color: #666;">{{ t.home_descripcion }}</p>
+        <div class="section-header">
+            <h2>{{ t.home_por_que }}</h2>
+            <p>{{ t.home_descripcion }}</p>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
-            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
-                <i class="fas fa-weight" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon-wrap"><i class="fas fa-weight"></i></div>
                 <h3>{{ t.home_ingredientes_titulo }}</h3>
                 <p>{{ t.home_ingredientes_texto }}</p>
             </div>
-            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
-                <i class="fas fa-recycle" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+            <div class="feature-card">
+                <div class="icon-wrap"><i class="fas fa-recycle"></i></div>
                 <h3>{{ t.home_desperdicio_titulo }}</h3>
                 <p>{{ t.home_desperdicio_texto }}</p>
             </div>
-            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
-                <i class="fas fa-clipboard-check" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+            <div class="feature-card">
+                <div class="icon-wrap"><i class="fas fa-clipboard-check"></i></div>
                 <h3>{{ t.home_instrucciones_titulo }}</h3>
                 <p>{{ t.home_instrucciones_texto }}</p>
             </div>
-            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; border-top: 4px solid #D84731;">
-                <i class="fas fa-shipping-fast" style="font-size: 40px; color: #D84731; margin-bottom: 20px;"></i>
+            <div class="feature-card">
+                <div class="icon-wrap"><i class="fas fa-shipping-fast"></i></div>
                 <h3>{{ t.home_entrega_titulo }}</h3>
                 <p>{{ t.home_entrega_texto }}</p>
             </div>
@@ -45,11 +159,12 @@
     </div>
 </section>
 
-<section style="background-color: #484A47; color: white; padding: 80px 0; text-align: center; border-radius: 20px; margin: 60px 0;">
-    <div class="container">
-        <h2 style="font-size: 36px;">{{ t.home_cta_titulo }}</h2>
-        <p style="font-size: 18px; max-width: 700px; margin: 0 auto 30px;">{{ t.home_cta_texto }}</p>
-        <a href="/registro" class="btn btn-primary" style="background-color: white; color: #484A47;">{{ t.home_cta_boton }}</a>
-    </div>
-</section>
+<div class="container">
+    <section class="cta-section">
+        <h2>{{ t.home_cta_titulo }}</h2>
+        <p>{{ t.home_cta_texto }}</p>
+        <a href="/registro" class="btn btn-primary">{{ t.home_cta_boton }}</a>
+    </section>
+</div>
+
 {% endblock %}

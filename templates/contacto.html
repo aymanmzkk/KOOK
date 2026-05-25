@@ -4,22 +4,35 @@
 
 {% block content %}
 <div class="container" style="max-width: 700px;">
-    <div style="background: white; padding: 40px; border-radius: 15px;">
-        <h1 style="color: #D84731; text-align: center;">{{ t.contacto }}</h1>
+    <h1 style="color: #D84731; text-align: center; margin-bottom: 10px;">{{ t.contacto }}</h1>
+    <p style="text-align: center; color: #666; margin-bottom: 30px;">
+        <i class="fas fa-envelope" style="color: #D84731;"></i> kook@info.com &nbsp;|&nbsp;
+        <i class="fas fa-phone" style="color: #D84731;"></i> +34 910 123 456
+    </p>
+
+    <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
         <form method="POST">
-            <div style="margin-bottom: 15px;">
-                <label>{{ t.registro_nombre }}</label>
-                <input type="text" name="nombre" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #484A47;">{{ t.contacto_nombre }}</label>
+                <input type="text" name="nombre" required
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s;"
+                    onfocus="this.style.borderColor='#D84731'" onblur="this.style.borderColor='#ddd'">
             </div>
-            <div style="margin-bottom: 15px;">
-                <label>{{ t.login_email }}</label>
-                <input type="email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #484A47;">{{ t.contacto_email }}</label>
+                <input type="email" name="email" required
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s;"
+                    onfocus="this.style.borderColor='#D84731'" onblur="this.style.borderColor='#ddd'">
             </div>
-            <div style="margin-bottom: 15px;">
-                <label>Mensaje</label>
-                <textarea name="mensaje" rows="5" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 6px; color: #484A47;">{{ t.contacto_mensaje }}</label>
+                <textarea name="mensaje" rows="5" required
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; resize: vertical; transition: border 0.2s;"
+                    onfocus="this.style.borderColor='#D84731'" onblur="this.style.borderColor='#ddd'"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">{{ t.login_entrar }}</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 16px; padding: 14px;">
+                <i class="fas fa-paper-plane"></i> {{ t.contacto_enviar }}
+            </button>
         </form>
     </div>
 </div>

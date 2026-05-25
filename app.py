@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -15,9 +15,9 @@ app.permanent_session_lifetime = timedelta(days=7)
 # Configuración BD
 db_config = {
     'host': 'localhost',
-    'user': 'usuario-kook',
-    'password': 'Kook2026$',
-    'database': 'KOOK',
+    'user': 'root',
+    'password': '',
+    'database': 'kook',
     'port': 3306
 }
 
@@ -125,9 +125,16 @@ TRADUCCIONES = {
         'perfil_fecha': 'Fecha',
         'perfil_total': 'Total',
         'perfil_estado': 'Estado',
+        'perfil_estadisticas': 'Estadísticas',
         'perfil_sin_pedidos': 'No tienes pedidos aún',
+        'perfil_explora_recetas': 'Explorar recetas',
         'perfil_ver_recetas': 'Ver recetas',
         'perfil_cerrar_sesion': 'Cerrar sesión',
+        'contacto_nombre': 'Nombre',
+        'contacto_email': 'Email',
+        'contacto_mensaje': 'Mensaje',
+        'contacto_enviar': 'Enviar mensaje',
+        'contacto_exito': '¡Mensaje enviado! Nos pondremos en contacto contigo pronto.',
         'admin_dashboard': 'Panel de Administración',
         'admin_usuarios': 'Usuarios',
         'admin_recetas': 'Recetas',
@@ -238,9 +245,16 @@ TRADUCCIONES = {
         'perfil_fecha': 'Date',
         'perfil_total': 'Total',
         'perfil_estado': 'Status',
+        'perfil_estadisticas': 'Statistics',
         'perfil_sin_pedidos': 'You have no orders yet',
+        'perfil_explora_recetas': 'Explore recipes',
         'perfil_ver_recetas': 'View recipes',
         'perfil_cerrar_sesion': 'Logout',
+        'contacto_nombre': 'Name',
+        'contacto_email': 'Email',
+        'contacto_mensaje': 'Message',
+        'contacto_enviar': 'Send message',
+        'contacto_exito': 'Message sent! We will get back to you soon.',
         'admin_dashboard': 'Administration Panel',
         'admin_usuarios': 'Users',
         'admin_recetas': 'Recipes',
@@ -606,10 +620,13 @@ def como_funciona():
     t = load_translations(lang)
     return render_template('como_funciona.html', t=t, current_lang=lang)
 
-@app.route('/contacto')
+@app.route('/contacto', methods=['GET', 'POST'])
 def contacto():
     lang = session.get('language', 'es')
     t = load_translations(lang)
+    if request.method == 'POST':
+        flash(t['contacto_exito'], 'success')
+        return redirect(url_for('contacto'))
     return render_template('contacto.html', t=t, current_lang=lang)
 
 # ======================================================
@@ -690,7 +707,7 @@ def detalle_receta(receta_id):
     t = load_translations(lang)
     receta = obtener_detalle_receta(receta_id, lang)
     if not receta:
-        return "Receta no encontrada", 404
+        abort(404)
     return render_template('detalle_receta.html', receta=receta, t=t, current_lang=lang)
 
 # ======================================================
@@ -783,6 +800,8 @@ def checkout():
 def perfil():
     lang = session.get('language', 'es')
     t = load_translations(lang)
+    conn = None
+    cursor = None
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
@@ -793,8 +812,9 @@ def perfil():
     except Exception as e:
         return f"Error: {e}"
     finally:
-        if conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
 
 # ======================================================
@@ -826,19 +846,22 @@ def admin_recetas():
     lang = session.get('language', 'es')
     t = load_translations(lang)
     
+    conn = None
+    cursor = None
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("""SELECT r.*, c.nombre as categoria FROM recetas r 
-                          JOIN categorias c ON r.categoria_id = c.categoria_id 
+        cursor.execute("""SELECT r.*, c.nombre as categoria FROM recetas r
+                          JOIN categorias c ON r.categoria_id = c.categoria_id
                           ORDER BY r.receta_id DESC""")
         recetas = cursor.fetchall()
         return render_template('admin/recetas.html', recetas=recetas, t=t, current_lang=lang)
     except Exception as e:
         return f"Error: {e}"
     finally:
-        if conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
 
 @app.route('/admin/usuarios')
@@ -851,19 +874,20 @@ def admin_usuarios():
     lang = session.get('language', 'es')
     t = load_translations(lang)
     
+    conn = None
+    cursor = None
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT usuario_id, nombre, apellidos, correo_electronico, telefono, pais, tipo_usuario, fecha_registro FROM usuarios ORDER BY fecha_registro DESC")
         usuarios = cursor.fetchall()
-        print(f"Usuarios encontrados: {len(usuarios)}")  # DEBUG
         return render_template('admin/usuarios.html', usuarios=usuarios, t=t, current_lang=lang)
     except Exception as e:
-        print(f"Error: {e}")  # DEBUG
         return f"Error: {e}"
     finally:
-        if conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
 
 @app.route('/admin/recetas/nueva', methods=['GET', 'POST'])
@@ -1196,13 +1220,15 @@ def admin_pedidos():
     lang = session.get('language', 'es')
     t = load_translations(lang)
     
+    conn = None
+    cursor = None
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT p.*, u.nombre, u.apellidos 
-            FROM pedidos p 
-            JOIN usuarios u ON p.usuario_id = u.usuario_id 
+            SELECT p.*, u.nombre, u.apellidos
+            FROM pedidos p
+            JOIN usuarios u ON p.usuario_id = u.usuario_id
             ORDER BY p.fecha_pedido DESC
         """)
         pedidos = cursor.fetchall()
@@ -1210,8 +1236,9 @@ def admin_pedidos():
     except Exception as e:
         return f"Error: {e}"
     finally:
-        if conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
 
 @app.route('/admin/pedidos/ver/<int:pedido_id>')
@@ -1224,24 +1251,23 @@ def admin_pedido_ver(pedido_id):
     lang = session.get('language', 'es')
     t = load_translations(lang)
     
+    conn = None
+    cursor = None
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        # Obtener datos del pedido y usuario
         cursor.execute("""
             SELECT p.*, u.nombre, u.apellidos, u.correo_electronico
-            FROM pedidos p 
-            JOIN usuarios u ON p.usuario_id = u.usuario_id 
+            FROM pedidos p
+            JOIN usuarios u ON p.usuario_id = u.usuario_id
             WHERE p.pedido_id = %s
         """, (pedido_id,))
         pedido = cursor.fetchone()
-        
+
         if not pedido:
             flash('Pedido no encontrado', 'error')
             return redirect(url_for('admin_pedidos'))
-        
-        # Obtener detalles del pedido
+
         cursor.execute("""
             SELECT d.*, r.nombre
             FROM detalles_pedido d
@@ -1249,13 +1275,14 @@ def admin_pedido_ver(pedido_id):
             WHERE d.pedido_id = %s
         """, (pedido_id,))
         detalles = cursor.fetchall()
-        
+
         return render_template('admin/pedido_detalle.html', pedido=pedido, detalles=detalles, t=t, current_lang=lang)
     except Exception as e:
         return f"Error: {e}"
     finally:
-        if conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
 
 @app.route('/admin/pedidos/cambiar-estado/<int:pedido_id>', methods=['POST'])
@@ -1272,6 +1299,8 @@ def admin_pedido_cambiar_estado(pedido_id):
         flash('Estado no válido', 'error')
         return redirect(url_for('admin_pedidos'))
     
+    conn = None
+    cursor = None
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -1281,8 +1310,9 @@ def admin_pedido_cambiar_estado(pedido_id):
     except Exception as e:
         flash(f'Error: {e}', 'error')
     finally:
-        if conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
     
     # Redirigir a la página anterior
