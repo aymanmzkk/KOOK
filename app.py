@@ -5,20 +5,29 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
 import os
 import json
+import secrets
+
+# Carga las variables del archivo .env si python-dotenv está instalado
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # Configuración de templates
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=template_dir)
-app.secret_key = 'clave-secreta-koook-2026'
+# La clave secreta se lee del entorno; si no existe se genera una aleatoria al arrancar
+app.secret_key = os.environ.get('KOOK_SECRET_KEY') or secrets.token_hex(32)
 app.permanent_session_lifetime = timedelta(days=7)
 
-# Configuración BD
+# Configuración BD (valores por defecto para desarrollo local con XAMPP/MySQL)
 db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'kook',
-    'port': 3306
+    'host': os.environ.get('KOOK_DB_HOST', 'localhost'),
+    'user': os.environ.get('KOOK_DB_USER', 'root'),
+    'password': os.environ.get('KOOK_DB_PASSWORD', ''),
+    'database': os.environ.get('KOOK_DB_NAME', 'kook'),
+    'port': int(os.environ.get('KOOK_DB_PORT', 3306))
 }
 
 # ======================================================

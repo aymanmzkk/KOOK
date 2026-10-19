@@ -175,12 +175,12 @@ INSERT INTO pasos_receta (receta_id, numero_paso, descripcion, descripcion_en) V
 (3, 3, 'Calentar las tortillas.', 'Warm the tortillas.'),
 (3, 4, 'Servir con repollo y salsa.', 'Serve with cabbage and sauce.');
 
--- Insertar usuarios (contraseñas: admin123, ayman2004, cliente123)
+-- Usuarios de demo (admins: admin123 · clientes: cliente123)
 INSERT INTO usuarios (nombre, apellidos, correo_electronico, telefono, direccion, pais, contrasenya, tipo_usuario) VALUES
-('Admin', 'KOOK', 'admin@kook.com', '+34 600 000 000', 'Calle Admin 1', 'España', 'scrypt:32768:8:1$gJxGqsp37GLCF8BZ$8e04be5fdff9df4994e2878e22d1dd0d3fb83578430a75a7f7ec89de355d0a4318b2e1bfe42a3a5fea3f9dffddcbcf91daf0ee199384c23515a9f10788c3b210', 'admin'),
-('Ayman', 'Mouzakki', 'ayman@kook.com', '+34 600 111 222', 'Calle Ayman 123', 'España', 'scrypt:32768:8:1$Fo6uawfuKUuoVHqX$aa5fe1a24b0a98124bd92f5c586cb2eaa0892f0f98aaba3570013be64cfd09d0192b1587f463ecfdef662b77bf647cdb981fe8e866dbaae855d2d21adfcdfded', 'admin'),
-('Juan', 'Pérez', 'juan@test.com', '+34 611 111 111', 'Calle Mayor 1', 'España', 'scrypt:32768:8:1$gJxGqsp37GLCF8BZ$8e04be5fdff9df4994e2878e22d1dd0d3fb83578430a75a7f7ec89de355d0a4318b2e1bfe42a3a5fea3f9dffddcbcf91daf0ee199384c23515a9f10788c3b210', 'cliente'),
-('María', 'López', 'maria@test.com', '+34 622 222 222', 'Av. Diagonal 2', 'España', 'scrypt:32768:8:1$gJxGqsp37GLCF8BZ$8e04be5fdff9df4994e2878e22d1dd0d3fb83578430a75a7f7ec89de355d0a4318b2e1bfe42a3a5fea3f9dffddcbcf91daf0ee199384c23515a9f10788c3b210', 'cliente');
+('Admin', 'KOOK', 'admin@kook.com', '+34 600 000 000', 'Calle Admin 1', 'España', 'scrypt:32768:8:1$mLKJ7SFWZewwLcBJ$5a21747500deb5415e591d33d9dde61e688fc19adb0bbb6bfaaf5965a7a9522c84e78e59a698dbc2bdb0254931eb590df23178954192a46e120a966c332cc9e1', 'admin'),
+('Ayman', 'Mouzakki', 'ayman@kook.com', '+34 600 111 222', 'Calle Ayman 123', 'España', 'scrypt:32768:8:1$x8wEIMYqN5JlxGDf$143305428f01fd00b098b6261a4a2c93c89331394162da94661ef7195fff9200e5a61b919f6dc1ff661b6b2718245b42b78c2dd6944d29395ffbe891111bb5cd', 'admin'),
+('Juan', 'Pérez', 'juan@test.com', '+34 611 111 111', 'Calle Mayor 1', 'España', 'scrypt:32768:8:1$gXMRt08NJ7Fx7gkZ$fb0ca8a89a6e39c5289a09a922883bb655e2e91e2c460d56176f9dd9d845c3e9d4d891a72fbd07fd01d8c5d09a398f1964216600144ebbe81602653866f347ba', 'cliente'),
+('María', 'López', 'maria@test.com', '+34 622 222 222', 'Av. Diagonal 2', 'España', 'scrypt:32768:8:1$Po5QuRul5CQpnarF$816f6839646f9d4ed49a814dde6dada32d644005b525684b164b381378f2190e847869749522ba4f5a37131fd8d3fe4b904c2f6fac4a5c63968b533c47056128', 'cliente');
 
 -- Insertar pedidos de ejemplo
 INSERT INTO pedidos (usuario_id, fecha_entrega, estado, total, direccion_envio) VALUES

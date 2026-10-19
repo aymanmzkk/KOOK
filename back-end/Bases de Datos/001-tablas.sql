@@ -188,8 +188,8 @@ INSERT INTO ingredientes (nombre, nombre_en, unidad) VALUES
 -- Usuarios
 INSERT INTO usuarios (nombre, apellidos, correo_electronico, contrasenya, tipo_usuario) VALUES
 ('Admin', 'KOOK', 'admin@kook.com', 'admin123', 'admin'),
-('Ayman', 'Mouzakki', 'ayman@kook.com', 'ayman2004', 'admin');
+('Ayman', 'Mouzakki', 'ayman@kook.com', 'admin123', 'admin');
 CREDENCIALES DE ACCESO
 Usuario	Email	Contraseña	Tipo
 Usuario Prueba	usuario@kook.com	usuario123	Usuario
-Ayman Mouzakki	ayman@kook.com	ayman2004	Admin
+Ayman Mouzakki	ayman@kook.com	admin123	Admin
